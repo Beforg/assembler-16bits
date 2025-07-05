@@ -22,7 +22,7 @@
  */
 #include <stdio.h>
 #include <stdint.h>
-#include <stdlib>
+#include <stdlib.h>
 #include <string.h>
 
 /*
@@ -58,16 +58,16 @@ int16_t montarInstrucao(char *linha) {
 	token = strtok(linha, delimitadores);
 	
 	if (token == NULL) {
-		perror("Linha vazia");
+		printf("Linha vazia");
 		return -1;
 	}
 	
 	if (strcasecmp(token, "LDA") == 0) {
 		uint16_t regD, immediate;
 		
-		token = strtok(NULL delimitadores);
+		token = strtok(NULL, delimitadores);
 		if (token == NULL) {
-			perror("Erro: falta o Registrador Destino.");
+			printf("Erro: falta o Registrador Destino.");
 			return -1;
 		}
 		regD = atoi(token);
@@ -75,24 +75,24 @@ int16_t montarInstrucao(char *linha) {
 		token = strtok(NULL, delimitadores);
 		
 		if (token == NULL) {
-			perror("Erro: falta o valor Imediato.");
+			printf("Erro: falta o valor Imediato.");
 			return -1;
 		}
 		immediate = atoi(token);
 		
 		if (immediate > MAX_IMMEDIATE) {
-			perror("Valor %d excede o valor máximo (15)", immediate);
+			printf("Erro: Valor %d excede o valor máximo (15)", immediate);
 			return -1;
 		}
 		if (regD > MAX_REGISTRADORES) {
-			perror("Valor R%d excede o registrador máximo (7)", immediate);
+			printf("Valor R%d excede o registrador máximo (7)", immediate);
 			return -1;
 		}
 		
 		instrucao = (OPCODE_LDA << 13) | (regD << 10) | (immediate);
 		
 	} else if(strcasecmp(token, "SUM") == 0 || strcasecmp(token, "SUB") == 0 || strcasecmp(token, "MUL") == 0) {
-		uint16_t opcode, regD, rf1, rf2
+		uint16_t opcode, regD, rf1, rf2;
 		
 		if (strcasecmp(token, "SUM") == 0) {
 			opcode = OPCODE_SUM;
@@ -104,37 +104,37 @@ int16_t montarInstrucao(char *linha) {
 		
 		token = strtok(NULL, delimitadores);
 		if (token == NULL) {
-			perror("Erro: falta o Registrador Destino.");
+			printf("Erro: falta o Registrador Destino.");
 			return -1;
 		}
 		regD = atoi(token);
 		
 		token = strtok(NULL, delimitadores);
 		if (token == NULL) {
-			perror("Erro: falta o Registrador Fonte 1.");
+			printf("Erro: falta o Registrador Fonte 1.");
 			return -1;
 		}
 		rf1 = atoi(token);
 		
 		token = strtok(NULL, delimitadores);
 		if (token == NULL) {
-			perror("Erro: falta o Registrador Fonte 2.");
+			printf("Erro: falta o Registrador Fonte 2.");
 			return -1;
 		}
 		rf2 = atoi(token);
 		
-		if (regD >= MAX_REGISTERS) { 
-			perror("Erro: Registrador de destino R%d invalido.\n", rd); 
+		if (regD >= MAX_REGISTRADORES) { 
+			printf("Erro: Registrador de destino R%d invalido.\n", regD); 
 			return -1; 
 		}
 		
-        if (rf1 >= MAX_REGISTERS) { 
+        if (rf1 >= MAX_REGISTRADORES) { 
 			printf("Erro: Registrador Fonte 1 R%d invalido.\n", rf1); 
 			return -1;
 		}
 		
-        if (rf2 >= MAX_REGISTERS) { 
-			perror("Erro: Registrador Fonte 2 R%d invalido.\n", rf2); 
+        if (rf2 >= MAX_REGISTRADORES) { 
+			printf("Erro: Registrador Fonte 2 R%d invalido.\n", rf2); 
 			return -1; 
 		}
 		
@@ -146,13 +146,13 @@ int16_t montarInstrucao(char *linha) {
 		token = strtok(NULL, delimitadores);
 		
 		if (token == NULL) {
-			perror("Erro: Falta o endereço");
+			printf("Erro: Falta o endereço");
 			return -1;
 		}
 		endereco = atoi(token);
 		
 		if (endereco > MAX_IMMEDIATE) {
-			perror("Erro: Endereço não pode ser maior do que 15");
+			printf("Erro: Endereço não pode ser maior do que 15");
 			return -1;
 		}
 		
@@ -185,11 +185,11 @@ int16_t montarInstrucao(char *linha) {
         if (token == NULL) { printf("ERRO: Faltando endereco de desvio.\n"); return -1; }
         endereco = atoi(token);
 
-        if (rf1 >= MAX_REGISTERS) { 
+        if (rf1 > MAX_REGISTRADORES) { 
 			printf("ERRO: Registrador fonte 1 R%d invalido.\n", rf1); 
 			return -1; 
 		}
-        if (rf2 >= MAX_REGISTERS) { 
+        if (rf2 > MAX_REGISTRADORES) { 
 			printf("ERRO: Registrador fonte 2 R%d invalido.\n", rf2); 
 			return -1; 
 		}
@@ -200,7 +200,7 @@ int16_t montarInstrucao(char *linha) {
 
         instrucao = (opcode << 13) | (rf1 << 7) | (rf2 << 4) | (endereco);
 	} else {
-		perror("Instrução %s inválida.", token);
+		printf("Instrução %s inválida.", token);
 		return -1;
 	}
 	
@@ -218,15 +218,15 @@ void exibirBinario(uint16_t n) {
 
 int main() {
     char linha[100];
-    uint16_t codigoAssembly[MAX_INSTRUCTIONS] = {0};
+    uint16_t codigoAssembly[MAX_INSTRUCOES] = {0};
     int contadorInstrucao = 0;
 
     printf("========== Montador para Mini-Arquitetura 16-bits ==========\n");
     printf("Projeto Digital I | Prof. Fábio Ramos | Engenharia de Computação\n");
     printf("Digite seu codigo em assembly, uma instrucao por linha.\n");
-    printf("Maximo de %d instrucoes. Digite 'fim' para terminar.\n\n", MAX_INSTRUCTIONS);
+    printf("Maximo de %d instrucoes. Digite 'fim' para terminar.\n\n", MAX_INSTRUCOES);
 
-    while (contadorInstrucao < MAX_INSTRUCTIONS) {
+    while (contadorInstrucao < MAX_INSTRUCOES) {
         printf("[%02d]> ", contadorInstrucao);
         if (fgets(linha, sizeof(linha), stdin) == NULL) {
             break; 
@@ -240,10 +240,10 @@ int main() {
         char linha_copia[100];
         strcpy(linha_copia, linha);
 
-        int16_t instrucao_montada = montar_instrucao(linha_copia);
+        int16_t instrucaoMontada = montarInstrucao(linha_copia);
 
-        if (instrucao_montada != -1) {
-            codigoAssembly[contadorInstrucao] = instrucao_montada;
+        if (instrucaoMontada != -1) {
+            codigoAssembly[contadorInstrucao] = instrucaoMontada;
             contadorInstrucao++;
         } else {
             printf("Instrucao invalida. Tente novamente.\n");
@@ -256,10 +256,11 @@ int main() {
 
     for (int i = 0; i < contadorInstrucao; i++) {
         printf("  %02d     |    %04X     | ", i, codigoAssembly[i]);
-        print_binario(codigoAssembly[i]);
+        exibirBinario(codigoAssembly[i]);
         printf("\n");
     }
 
     printf("\nCopie e cole os valores hexadecimais na memoria do Logisim.\n");
 
     return 0;
+ }
