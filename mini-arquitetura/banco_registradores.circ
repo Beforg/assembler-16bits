@@ -132,7 +132,6 @@
     <wire from="(590,320)" to="(640,320)"/>
     <wire from="(850,500)" to="(850,510)"/>
     <wire from="(580,630)" to="(630,630)"/>
-    <wire from="(210,800)" to="(520,800)"/>
     <wire from="(520,460)" to="(560,460)"/>
     <wire from="(390,220)" to="(560,220)"/>
     <wire from="(520,640)" to="(520,730)"/>
@@ -204,7 +203,6 @@
     <wire from="(860,680)" to="(860,750)"/>
     <wire from="(710,490)" to="(710,560)"/>
     <wire from="(710,210)" to="(710,280)"/>
-    <wire from="(130,800)" to="(180,800)"/>
     <wire from="(370,750)" to="(860,750)"/>
     <wire from="(380,710)" to="(550,710)"/>
     <wire from="(150,390)" to="(710,390)"/>
@@ -227,6 +225,7 @@
     <wire from="(600,540)" to="(670,540)"/>
     <wire from="(520,270)" to="(520,330)"/>
     <wire from="(580,720)" to="(840,720)"/>
+    <wire from="(130,800)" to="(520,800)"/>
     <wire from="(840,670)" to="(850,670)"/>
     <wire from="(860,390)" to="(940,390)"/>
     <wire from="(860,750)" to="(940,750)"/>
@@ -237,55 +236,92 @@
       <a name="width" val="4"/>
       <a name="label" val="R6"/>
     </comp>
-    <comp lib="0" loc="(120,370)" name="Pin">
-      <a name="width" val="4"/>
-      <a name="tristate" val="false"/>
-      <a name="label" val="DATA"/>
-    </comp>
-    <comp lib="4" loc="(880,350)" name="Register">
-      <a name="width" val="4"/>
-      <a name="label" val="R3"/>
-    </comp>
-    <comp lib="0" loc="(1040,660)" name="Pin">
+    <comp lib="0" loc="(1050,140)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
       <a name="width" val="4"/>
-      <a name="label" val="Out_Reg7"/>
+      <a name="label" val="Out_Reg0"/>
       <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="0" loc="(380,420)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg4"/>
+    </comp>
+    <comp lib="1" loc="(600,540)" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="inputs" val="2"/>
+    </comp>
+    <comp lib="1" loc="(590,320)" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="inputs" val="2"/>
+    </comp>
+    <comp lib="0" loc="(370,560)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg6"/>
+    </comp>
+    <comp lib="4" loc="(790,280)" name="Register">
+      <a name="width" val="4"/>
+      <a name="label" val="R2"/>
+    </comp>
+    <comp lib="4" loc="(790,420)" name="Register">
+      <a name="width" val="4"/>
+      <a name="label" val="R4"/>
+    </comp>
+    <comp lib="0" loc="(390,220)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg1"/>
+    </comp>
+    <comp lib="4" loc="(880,490)" name="Register">
+      <a name="width" val="4"/>
+      <a name="label" val="R5"/>
     </comp>
     <comp lib="1" loc="(580,630)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
     </comp>
-    <comp lib="0" loc="(1030,350)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
-      <a name="width" val="4"/>
-      <a name="label" val="Out_Reg3"/>
-      <a name="labelloc" val="east"/>
+    <comp lib="0" loc="(370,630)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg 7"/>
     </comp>
     <comp lib="0" loc="(130,800)" name="Pin">
       <a name="tristate" val="false"/>
       <a name="label" val="WRITE"/>
     </comp>
-    <comp lib="4" loc="(880,210)" name="Register">
+    <comp lib="0" loc="(1040,280)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
       <a name="width" val="4"/>
-      <a name="label" val="R1"/>
+      <a name="label" val="Out_Reg2"/>
+      <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="1" loc="(210,800)" name="NOT Gate"/>
-    <comp lib="0" loc="(370,560)" name="Pin">
+    <comp lib="0" loc="(390,360)" name="Pin">
       <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg6"/>
+      <a name="label" val="En_Reg3"/>
     </comp>
-    <comp lib="0" loc="(690,30)" name="Pin">
+    <comp lib="0" loc="(360,710)" name="Pin">
       <a name="tristate" val="false"/>
-      <a name="label" val="Reset"/>
+      <a name="label" val="Clock"/>
+    </comp>
+    <comp lib="4" loc="(790,140)" name="Register">
+      <a name="width" val="4"/>
+      <a name="label" val="R0"/>
     </comp>
     <comp lib="0" loc="(1040,420)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
       <a name="width" val="4"/>
       <a name="label" val="Out_Reg4"/>
+      <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="0" loc="(390,290)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg2"/>
+    </comp>
+    <comp lib="0" loc="(1040,660)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+      <a name="width" val="4"/>
+      <a name="label" val="Out_Reg7"/>
       <a name="labelloc" val="east"/>
     </comp>
     <comp lib="0" loc="(1030,560)" name="Pin">
@@ -295,78 +331,33 @@
       <a name="label" val="Out_Reg6"/>
       <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="1" loc="(600,540)" name="AND Gate">
-      <a name="size" val="30"/>
-      <a name="inputs" val="2"/>
+    <comp lib="0" loc="(690,30)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="Reset"/>
     </comp>
-    <comp lib="0" loc="(1050,140)" name="Pin">
+    <comp lib="0" loc="(120,370)" name="Pin">
+      <a name="width" val="4"/>
+      <a name="tristate" val="false"/>
+      <a name="label" val="DATA"/>
+    </comp>
+    <comp lib="0" loc="(1030,350)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
       <a name="width" val="4"/>
-      <a name="label" val="Out_Reg0"/>
+      <a name="label" val="Out_Reg3"/>
       <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="0" loc="(380,500)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg5"/>
-    </comp>
-    <comp lib="0" loc="(1040,280)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
+    <comp lib="4" loc="(880,210)" name="Register">
       <a name="width" val="4"/>
-      <a name="label" val="Out_Reg2"/>
-      <a name="labelloc" val="east"/>
-    </comp>
-    <comp lib="0" loc="(390,290)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg2"/>
-    </comp>
-    <comp lib="0" loc="(1050,210)" name="Pin">
-      <a name="facing" val="west"/>
-      <a name="output" val="true"/>
-      <a name="width" val="4"/>
-      <a name="label" val="Out_Reg1"/>
-      <a name="labelloc" val="east"/>
-    </comp>
-    <comp lib="1" loc="(590,320)" name="AND Gate">
-      <a name="size" val="30"/>
-      <a name="inputs" val="2"/>
-    </comp>
-    <comp lib="1" loc="(580,720)" name="AND Gate">
-      <a name="size" val="30"/>
-      <a name="inputs" val="2"/>
-    </comp>
-    <comp lib="1" loc="(590,260)" name="AND Gate">
-      <a name="size" val="30"/>
-      <a name="inputs" val="2"/>
-    </comp>
-    <comp lib="4" loc="(790,420)" name="Register">
-      <a name="width" val="4"/>
-      <a name="label" val="R4"/>
-    </comp>
-    <comp lib="0" loc="(360,710)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="Clock"/>
-    </comp>
-    <comp lib="0" loc="(370,160)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg0"/>
+      <a name="label" val="R1"/>
     </comp>
     <comp lib="1" loc="(580,140)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
     </comp>
-    <comp lib="0" loc="(390,220)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg1"/>
-    </comp>
-    <comp lib="0" loc="(390,360)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg3"/>
-    </comp>
-    <comp lib="4" loc="(880,490)" name="Register">
-      <a name="width" val="4"/>
-      <a name="label" val="R5"/>
+    <comp lib="1" loc="(590,450)" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="inputs" val="2"/>
     </comp>
     <comp lib="0" loc="(1040,490)" name="Pin">
       <a name="facing" val="west"/>
@@ -375,33 +366,40 @@
       <a name="label" val="Out_Reg5"/>
       <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="4" loc="(880,660)" name="Register">
+    <comp lib="0" loc="(1050,210)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
       <a name="width" val="4"/>
-      <a name="label" val="R7"/>
+      <a name="label" val="Out_Reg1"/>
+      <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="4" loc="(790,140)" name="Register">
-      <a name="width" val="4"/>
-      <a name="label" val="R0"/>
+    <comp lib="1" loc="(580,720)" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="inputs" val="2"/>
     </comp>
-    <comp lib="0" loc="(380,420)" name="Pin">
+    <comp lib="0" loc="(370,160)" name="Pin">
       <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg4"/>
+      <a name="label" val="En_Reg0"/>
     </comp>
     <comp lib="1" loc="(590,210)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
     </comp>
-    <comp lib="0" loc="(370,630)" name="Pin">
-      <a name="tristate" val="false"/>
-      <a name="label" val="En_Reg 7"/>
-    </comp>
-    <comp lib="4" loc="(790,280)" name="Register">
+    <comp lib="4" loc="(880,350)" name="Register">
       <a name="width" val="4"/>
-      <a name="label" val="R2"/>
+      <a name="label" val="R3"/>
     </comp>
-    <comp lib="1" loc="(590,450)" name="AND Gate">
+    <comp lib="0" loc="(380,500)" name="Pin">
+      <a name="tristate" val="false"/>
+      <a name="label" val="En_Reg5"/>
+    </comp>
+    <comp lib="1" loc="(590,260)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
+    </comp>
+    <comp lib="4" loc="(880,660)" name="Register">
+      <a name="width" val="4"/>
+      <a name="label" val="R7"/>
     </comp>
   </circuit>
 </project>
