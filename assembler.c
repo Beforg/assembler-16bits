@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /*
  * Definição das instruções da arquitetura.
@@ -216,16 +217,65 @@ void exibirBinario(uint16_t n) {
     }
 }
 
+void exibirInstrucoes() {
+    printf("\n--- Guia de Instrucoes da Arquitetura ---\n");
+    printf("Os operandos devem seguir os seguintes limites:\n");
+    printf("  - Rd, Rf1, Rf2: Registradores de R0 a R7.\n");
+    printf("  - Imediato, Endereco: Valores numericos de 0 a 15.\n\n");
+    printf("Instrucao | Formato de Uso           | Descricao\n");
+    printf("----------|--------------------------|--------------------------------------------------\n");
+    printf("LDA       | LDA Rd, Imediato         | Carrega um valor Imediato no registrador Rd.\n");
+    printf("SUM       | SUM Rd, Rf1, Rf2         | Soma o valor de Rf1 e Rf2 e armazena em Rd.\n");
+    printf("SUB       | SUB Rd, Rf1, Rf2         | Subtrai o valor de Rf1 por Rf2 e armazena em Rd.\n");
+    printf("MUL       | MUL Rd, Rf1, Rf2         | Multiplica o valor de Rf1 por Rf2 e armazena em Rd.\n");
+    printf("JMP       | JMP Endereco             | Salta (pula) incondicionalmente para o Endereco.\n");
+    printf("BNE       | BNE Rf1, Rf2, Endereco   | Salta para o Endereco se o valor de Rf1 for diferente de Rf2.\n");
+    printf("BEQ       | BEQ Rf1, Rf2, Endereco   | Salta para o Endereco se o valor de Rf1 for igual a Rf2.\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("Comandos do Montador:\n");
+    printf("  - Digite 'ajuda' para ver este guia novamente.\n");
+    printf("  - Digite 'fim' para finalizar a entrada e montar o codigo.\n\n");
+}
+
+/**
+ * Salva o código de máquina em um arquivo de texto compatível com o Logisim.
+ * @param nome_arquivo O nome do arquivo a ser criado (ex: "programa.txt").
+ * @param codigo_maquina Ponteiro para o array com as instruções montadas.
+ * @param contador_instrucao O número de instruções a serem salvas.
+ * @return 0 em caso de sucesso, -1 em caso de erro.
+ */
+int salvarEmArquivo(const char* nome_arquivo, const uint16_t* codigo_maquina, int contador_instrucao) {
+    FILE* arquivo = fopen(nome_arquivo, "w");
+
+    if (arquivo == NULL) {
+        perror("ERRO: Nao foi possivel abrir o arquivo para escrita");
+        return -1;
+    }
+    fprintf(arquivo, "v2.0 raw\n");
+    for (int i = 0; i < contador_instrucao; i++) {
+        fprintf(arquivo, "%04X\n", codigo_maquina[i]);
+    }
+    fclose(arquivo);
+
+    printf("\n>>> Codigo salvo com sucesso no arquivo '%s'\n", nome_arquivo);
+
+    return 0;
+}
+
 int main() {
     char linha[100];
     uint16_t codigoAssembly[MAX_INSTRUCOES] = {0};
     int contadorInstrucao = 0;
 
-    printf("========== Montador para Mini-Arquitetura 16-bits ==========\n");
+    printf("============ Montador para Mini-Arquitetura 16-bits ============\n");
     printf("Projeto Digital I | Prof. Fábio Ramos | Engenharia de Computação\n");
+    printf("================================================================\n");
     printf("Digite seu codigo em assembly, uma instrucao por linha.\n");
     printf("Maximo de %d instrucoes. Digite 'fim' para terminar.\n\n", MAX_INSTRUCOES);
-
+	printf("----------------------------------------------------------------\n");
+	//sleep(2);
+	exibirInstrucoes();
+	
     while (contadorInstrucao < MAX_INSTRUCOES) {
         printf("[%02d]> ", contadorInstrucao);
         if (fgets(linha, sizeof(linha), stdin) == NULL) {
@@ -236,6 +286,10 @@ int main() {
             break;
         }
 
+        if (strcasecmp(linha, "ajuda\n") == 0 || strcasecmp(linha, "ajuda\r\n") == 0) {
+            exibirInstrucoes();
+            continue; 
+        }
         
         char linha_copia[100];
         strcpy(linha_copia, linha);
@@ -259,8 +313,20 @@ int main() {
         exibirBinario(codigoAssembly[i]);
         printf("\n");
     }
+    if (contadorInstrucao > 0) {
+        char nomeArquivo[100];
+        printf("\nDigite o nome do arquivo para salvar (ex: programa.txt): ");
+        
+        if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin) != NULL) {
+            nomeArquivo[strcspn(nomeArquivo, "\n")] = 0;
+            salvarEmArquivo(nomeArquivo, codigoAssembly, contadorInstrucao);
+        }
+        printf("\nCarregue os valores na memória do circuito do Logisim.\n");
+    } else {
+        printf("\nNenhuma instrucao foi montada. Nenhum arquivo foi salvo.\n");
+    }
 
-    printf("\nCopie e cole os valores hexadecimais na memoria do Logisim.\n");
+    
 
     return 0;
  }
