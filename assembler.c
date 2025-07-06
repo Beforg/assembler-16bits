@@ -1,5 +1,5 @@
 /*
- * assembler.c
+ * assembler.c | == Documentação Gerada pelo Gemini == |
  * * Copyright 2025, Desenvolvido por Bruno Forgiarini <www.beforg.my>
  * * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,7 +317,7 @@ int main() {
             nomeArquivo[strcspn(nomeArquivo, "\n\r")] = 0;
             salvarEmArquivo(nomeArquivo, codigoAssembly, contadorInstrucao);
         }
-        printf("\nCarregue os valores na memória do circuito do Logisim.\n");
+        printf("\nCarregue os valores na memória RAM do circuito do Logisim.\n");
     } else {
         printf("\nNenhuma instrucao foi montada. Nenhum arquivo foi salvo.\n");
     }
