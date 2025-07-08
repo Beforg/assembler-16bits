@@ -25,17 +25,17 @@ Este repositório contém a implementação de um **microprocessador didático d
 | Instrução | Sintaxe                             | Descrição |
 |-----------|-------------------------------------|-----------|
 | `LDA`     | `LDA Rdest, valor_imediato`         | Carrega um valor imediato no registrador destino |
-| `SUM`     | `SUM Rdest, Rsrc1, Rsrc2`           | Soma `Rsrc1` com `Rsrc2` e armazena em `Rdest` |
-| `SUB`     | `SUB Rdest, Rsrc1, Rsrc2`           | Subtrai `Rsrc2` de `Rsrc1` e armazena em `Rdest` |
-| `MUL`     | `MUL Rdest, Rsrc1, Rsrc2`           | Multiplica `Rsrc1` por `Rsrc2` e armazena em `Rdest` |
+| `SUM`     | `SUM Rdest, Rf1, Rf2`           | Soma `Rf1` com `Rf2` e armazena em `Rdest` |
+| `SUB`     | `SUB Rdest, Rf1, Rf2`           | Subtrai `Rf2` de `Rf1` e armazena em `Rdest` |
+| `MUL`     | `MUL Rdest, Rf1, Rf2`           | Multiplica `Rf1` por `Rf2` e armazena em `Rdest` |
 
 ### ✅ Grupo 2 — Controle de Fluxo
 
 | Instrução | Sintaxe                             | Descrição |
 |-----------|-------------------------------------|-----------|
 | `JMP`     | `JMP endereço`                      | Desvia incondicionalmente para o endereço indicado |
-| `BEQ`     | `BEQ Rsrc1, Rsrc2, endereço`        | Desvia se `Rsrc1` for igual a `Rsrc2` |
-| `BNE`     | `BNE Rsrc1, Rsrc2, endereço`        | Desvia se `Rsrc1` for diferente de `Rsrc2` |
+| `BEQ`     | `BEQ Rf1, Rf2, endereço`        | Desvia se `Rf1` for igual a `Rf2` |
+| `BNE`     | `BNE Rf1, Rf2, endereço`        | Desvia se `Rf1` for diferente de `Rf2` |
 
 ---
 
@@ -43,7 +43,9 @@ Este repositório contém a implementação de um **microprocessador didático d
 
 Visão geral do datapath implementado no Logisim:
 
-![Circuito no Logisim](/assets/arquitetura_06072025.png)
+[Montagem da Parte de Controle](/fsm/controle-fsm.pdf)
+
+![Circuito no Logisim](/assets/arquitetura_08072025.png)
 
 
 
@@ -53,7 +55,7 @@ Visão geral do datapath implementado no Logisim:
 
 ### 🔧 Pré-requisitos
 
-- [Logisim](https://sourceforge.net/projects/circuit/) — Versão recomendada.
+- [Logisim](https://sourceforge.net/projects/circuit/)
 - GCC — Compilador C (Recomendável recompilar o código .c).
 
 ---
@@ -83,10 +85,10 @@ Execute o montador e escreva o código (ao final, insira o nome do arquivo + .tx
 Digite seu código linha por linha no terminal:
 
 ```
-LDA,R1,10
-LDA,R2,12
-SUM,R3,R1,R2
-JMP,3
+[00]> LDA,R1,4
+[01]> LDA,R2,5
+[02]> SUM,R3,R1,R2
+[03]> JMP,3
 ```
 
 ---
@@ -115,3 +117,8 @@ JMP,3
 
 ---
 
+### Créditos
+
+- [Bruno Forgiarini](https://github.com/Beforg)
+- [Ely Neto](https://github.com/netoe1)
+- [Pablo Henrique](https://github.com/pablo-ferz)

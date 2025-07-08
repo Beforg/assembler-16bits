@@ -30,6 +30,7 @@
 #define OPCODE_JMP 0b100
 #define OPCODE_BNE 0b101
 #define OPCODE_BEQ 0b110
+#define OPCODE_STA 0b111 // FEAT: adicionando instrução STA no montador.
 
 /**
  * @brief Constantes que definem os limites da arquitetura.
@@ -60,10 +61,18 @@ int16_t montarInstrucao(char *linha) {
     }
     
     // Compara o token com os mnemônicos conhecidos, ignorando maiúsculas/minúsculas.
-    if (strcasecmp(token, "LDA") == 0) {
-        uint16_t regD, immediate;
+    if (strcasecmp(token, "LDA") == 0 || strcasecmp(token, "STA") == 0) {
+        uint16_t opcode, regD, immediate;
+		int sta = 0;
         
-        // Pega o próximo token (o número do registrador de destino).
+        if (strcasecmp(token, "STA") == 0) {
+			opcode = OPCODE_STA;
+			sta = 1;
+		} else {
+			opcode = OPCODE_LDA;
+		}
+        
+        // Pega o próximo token (o número do registrador de destino)
         token = strtok(NULL, delimitadores);
         if (token == NULL) {
             printf("Erro: falta o Registrador Destino.\n");
@@ -91,7 +100,12 @@ int16_t montarInstrucao(char *linha) {
         }
         
         // Montagem da instrução usando operações de bits (deslocamento e OU).
-        instrucao = (OPCODE_LDA << 13) | (regD << 10) | (immediate);
+        if (sta == 1) {
+			instrucao = (opcode << 13) | (regD << 7) | (immediate);
+		} else {
+			instrucao = (opcode << 13) | (regD << 10) | (immediate);
+		}
+        
         
     } else if(strcasecmp(token, "SUM") == 0 || strcasecmp(token, "SUB") == 0 || strcasecmp(token, "MUL") == 0) {
         uint16_t opcode, regD, rf1, rf2;
@@ -202,6 +216,7 @@ void exibirInstrucoes() {
     printf("Instrucao | Formato de Uso           | Descricao\n");
     printf("----------|--------------------------|--------------------------------------------------\n");
     printf("LDA       | LDA Rd, Imediato         | Carrega um valor Imediato no registrador Rd.\n");
+    printf("STA       | LDA Rf, Endereco         | Salva na memória o valor de Rf.\n");
     printf("SUM       | SUM Rd, Rf1, Rf2         | Soma o valor de Rf1 e Rf2 e armazena em Rd.\n");
     printf("SUB       | SUB Rd, Rf1, Rf2         | Subtrai o valor de Rf1 por Rf2 e armazena em Rd.\n");
     printf("MUL       | MUL Rd, Rf1, Rf2         | Multiplica o valor de Rf1 por Rf2 e armazena em Rd.\n");
