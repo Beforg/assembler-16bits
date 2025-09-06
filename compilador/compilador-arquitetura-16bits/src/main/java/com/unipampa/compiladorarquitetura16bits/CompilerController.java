@@ -12,6 +12,8 @@ public class CompilerController {
 
     @FXML
     private void action() {
-        System.out.println(codingArea.getText());
+        Parser parser = new Parser();
+        String code = parser.parse(codingArea.getText());
+        System.out.println(code);
     }
 }

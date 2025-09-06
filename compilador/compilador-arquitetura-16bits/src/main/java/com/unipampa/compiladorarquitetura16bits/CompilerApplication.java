@@ -11,8 +11,8 @@ public class CompilerApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(CompilerApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 750);
-        stage.setTitle("Hello!");
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 1200);
+        stage.setTitle("Compilador Arquitetura 16 bits");
         stage.setScene(scene);
         stage.show();
     }
