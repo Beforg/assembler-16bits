@@ -9,6 +9,78 @@
 
 char *input_file = NULL;
 char *output_file = NULL;
+void printCodeOnFile(const char *filename, const char *content);
+FILE *
+readFile(const char *filename);
+void assemble(FILE *openedFile);
+void closeFile(FILE *closeFile);
+void show_help(const char *progname);
+void clearFile(const char *filename);
+
+int main(int argc, char *argv[])
+{
+    setlocale(LC_ALL, "");
+    int opt;
+    if (argc == 1)
+    {
+        show_help(argv[0]);
+        return 0;
+    }
+
+    if (argc == 2)
+    {
+        if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
+        {
+            puts("show help");
+            show_help(argv[0]);
+        }
+        else if (strcmp(argv[1], "--interactive") == 0 || strcmp(argv[1], "-i") == 0)
+        {
+            clearTerminal();
+            exec_interactive();
+        }
+        else
+        {
+            puts("assembler-err: Invalid statement for 2 args. Check --help!");
+        }
+        return 0;
+    }
+
+    for (int i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--interactive") == 0)
+        {
+            puts("assembler-err: --help and --interactive(-i) are used with 2 arguments!");
+            return -1;
+        }
+    }
+
+    while ((opt = getopt(argc, argv, "c:o:")) != -1)
+    {
+        switch (opt)
+        {
+        case 'c':
+            input_file = optarg;
+            break;
+        case 'o':
+            output_file = optarg;
+            break;
+        default:
+            printf("assembler-err: Incomplete args! Use --help to info!\n");
+            return -1;
+        }
+    }
+
+    if (!input_file || !output_file)
+    {
+        printf("assembler-err: Incomplete args! Use --help to info!\n");
+        return -1;
+    }
+    FILE *f = readFile(input_file);
+    assemble(f);
+    closeFile(f);
+}
+
 void printCodeOnFile(const char *filename, const char *content)
 {
 
@@ -48,6 +120,23 @@ void printCodeOnFile(const char *filename, const char *content)
         }
     }
 }
+
+void clearFile(const char *filename)
+{
+    FILE *f = fopen(filename, "w");
+
+    if (!f)
+    {
+        fprintf(stderr, "Erro ao limpar buffer em clearFile.");
+        exit(-1);
+    }
+    if (fclose(f) == -1)
+    {
+        fprintf(stderr, "Erro ao fechar arquivo em clearFile.");
+        exit(-1);
+    }
+}
+
 FILE *
 readFile(const char *filename)
 {
@@ -67,6 +156,7 @@ readFile(const char *filename)
     strncpy(input_file, filename, sizeof(input_file) - 1);
     return f;
 }
+
 void assemble(FILE *openedFile)
 {
     char line[LINE_LIMIT];
@@ -287,6 +377,7 @@ void assemble(FILE *openedFile)
 
     puts("assembler-info: ending-parse...");
 }
+
 void closeFile(FILE *closeFile)
 {
     if (!closeFile)
@@ -301,6 +392,7 @@ void closeFile(FILE *closeFile)
         exit(-1);
     }
 }
+
 void show_help(const char *progname)
 {
     printf("==================Creators:==================\n\n");
@@ -316,83 +408,4 @@ void show_help(const char *progname)
     printf("  -i or --interactive       Execute assembler on interactive mode!\n\n");
     printf("===================Usage:====================\n\n");
     printf(" %s -c input.asm -o output.txt\n", progname);
-}
-
-void clearFile(const char *filename)
-{
-    FILE *f = fopen(filename, "w");
-
-    if (!f)
-    {
-        fprintf(stderr, "Erro ao limpar buffer em clearFile.");
-        exit(-1);
-    }
-    if (fclose(f) == -1)
-    {
-        fprintf(stderr, "Erro ao fechar arquivo em clearFile.");
-        exit(-1);
-    }
-}
-int main(int argc, char *argv[])
-{
-    setlocale(LC_ALL, "");
-    int opt;
-    if (argc == 1)
-    {
-        show_help(argv[0]);
-        return 0;
-    }
-
-    if (argc == 2)
-    {
-        if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
-        {
-            puts("show help");
-            show_help(argv[0]);
-        }
-        else if (strcmp(argv[1], "--interactive") == 0 || strcmp(argv[1], "-i") == 0)
-        {
-            clearTerminal();
-            exec_interactive();
-        }
-        else
-        {
-            puts("assembler-err: Invalid statement for 2 args. Check --help!");
-        }
-        return 0;
-    }
-
-    for (int i = 1; i < argc; i++)
-    {
-        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--interactive") == 0)
-        {
-            puts("assembler-err: --help and --interactive(-i) are used with 2 arguments!");
-            return -1;
-        }
-    }
-
-    while ((opt = getopt(argc, argv, "c:o:")) != -1)
-    {
-        switch (opt)
-        {
-        case 'c':
-            input_file = optarg;
-            break;
-        case 'o':
-            output_file = optarg;
-            break;
-        default:
-            printf("assembler-err: Incomplete args! Use --help to info!\n");
-            return -1;
-        }
-    }
-
-    if (!input_file || !output_file)
-    {
-        printf("assembler-err: Incomplete args! Use --help to info!\n");
-        return -1;
-    }
-    FILE *f = readFile(input_file);
-    assemble(f);
-    closeFile(f);
 }
