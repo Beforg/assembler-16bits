@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@types/node": "^24.5.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.2"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "ts-node-dev --esm --ignore-watch node_modules main.ts"
+  }
+}
