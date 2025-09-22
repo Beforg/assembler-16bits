@@ -1,7 +1,4 @@
-/*-----INTERFACES-----*/
-const LOCK = 1;
-const UNLOCK = 0;
-
+import { LockState } from "./IRegister";
 /*-----CLASSE-----*/
 class Register {
   private _id: number;
@@ -33,19 +30,19 @@ class Register {
     return this._lock;
   }
 
-  set lockState(state: number) {
+  set lockState(state: LockState) {
     this._lock = state;
     console.info(`simu-info: register.lockState(): ${this._lock}`);
   }
 
-  set data(_data: number){
+  set data(_data: number) {
     if (_data < 0 || _data > 15) {
       throw new Error(
         `simu-err: register.data():[reg ${this._id}] O registrador apenas consegue suportar valores entre 0 e 15.`
       );
     }
 
-    if (this._lock == LOCK) {
+    if (this._lock == LockState.LOCK) {
       console.warn(
         `simu-err: register.data():[reg ${this._id}] Você não pode modificar um registrador que está travado.`
       );
@@ -58,4 +55,3 @@ class Register {
 /*-----EXPORT-----*/
 
 export { Register };
-export { LOCK, UNLOCK };
