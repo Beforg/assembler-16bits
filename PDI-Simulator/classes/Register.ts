@@ -38,7 +38,7 @@ class Register {
   set data(_data: number) {
     if (_data < 0 || _data > 15) {
       throw new Error(
-        `simu-err: register.data():[reg ${this._id}] O registrador apenas consegue suportar valores entre 0 e 15.`
+        `simu-err: register.data():[reg ${this._id}] Os registradores apenas conseguem suportar valores entre 0 e 15.`
       );
     }
 
