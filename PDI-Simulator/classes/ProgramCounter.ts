@@ -28,14 +28,15 @@ class ProgramCounter {
     }
   }
 
-
   public get currentAddress(): number {
     return this._currentAddress;
   }
 
   public set currentAddress(new_addr: number) {
-    if(!Number.isInteger(new_addr)){
-        throw new Error('ProgramCounter: currentAddress():  O new_addr informado deve ser um inteiro.');
+    if (!Number.isInteger(new_addr)) {
+      throw new Error(
+        "ProgramCounter: currentAddress():  O new_addr informado deve ser um inteiro."
+      );
     }
     this.verifyOutOfBounds(new_addr);
     this._currentAddress = new_addr;
@@ -46,8 +47,6 @@ class ProgramCounter {
   }
 
   public set beginAddr(limit: number) {
-
-    
     if (limit < 0) {
       throw new Error(
         "ProgramCounter:beginAddr(): O endereço inicial de memória não pode ser x < 0."
@@ -68,6 +67,30 @@ class ProgramCounter {
       );
     }
     this._endAddr = limit;
+  }
+
+  public nextInstruction(): void {
+    if (
+      this.currentAddress >= this.beginAddr ||
+      this.currentAddress < this.endAddr
+    ) {
+      this.currentAddress++;
+      return;
+    }
+
+    throw new Error(
+      "ProgramCounter-err: nextInstruction(): Você chegou ao limite da memória de programa!"
+    );
+  }
+
+  public jumpToAddress(newAddr: number): void {
+    Validation.isInteger(newAddr);
+    newAddr = Math.abs(newAddr);
+
+    if (newAddr >= this.beginAddr || newAddr < this.endAddr) {
+      this.currentAddress = newAddr;
+      return;
+    }
   }
 }
 
