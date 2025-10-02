@@ -6,25 +6,21 @@
 *================================================================================================
 * */
 
-
 // Interface da Classe
-interface IProgramCounter{
-    public int getCurrentPos();         // get: retorna a posição que o PC se encontra
-    public int getLimit();              // get: retorna o limite teórico informado no construtor. O real será sempre limit -1, assim como um vetor
-    public int getRealLimit();          // get: retorna o limite real do programCounter.
-    public void setLimit();             // set: Seta um novo limite de forma incondicional.
-    public void setCurrentPos();        // set: Troca o valor da posição corrente. É comparável a um JMP de assembly.     // method: capaz de avançar uma posição na memória.
-    public void nextPos();              // method: Soma mais um
-    public void jumpTo(int address);    // method: Pula para um endereço válido.
 
+ interface IProgramCounter{
+     int getCurrentPos();                 // get: retorna a posição que o PC se encontra
+    int getLimit();                      // get: retorna o limite teórico informado no construtor. O real será sempre limit -1, assim como um vetor
+    int getRealLimit();                  // get: retorna o limite real do programCounter.
+    void setCurrentPos(int newPos);      // set: Troca o valor da posição corrente. É comparável a um JMP de assembly.     // method: capaz de avançar uma posição na memória.
+    void nextPos();                      // method: Soma mais um
+    void jumpTo(int address);            // method: Pula para um endereço válido.
 };
 
 // Declaração da classe ProgramCounter
 public class ProgramCounter implements IProgramCounter {
     private int currentPosition;    // Atributo: posição atual do
-    private int limit;              // Atributo: para o limite.
-
-
+    private final int limit;        // Atributo: para o limite.
 
     ProgramCounter(int _limit){
         if(_limit <= 0){
@@ -35,33 +31,40 @@ public class ProgramCounter implements IProgramCounter {
         this.currentPosition = 0;
         // O limite é o valor de endereço máximo que ele pode percorrer;
         // O valor máximo é de [0,limit - 1], assim como o tamanho de um vetor;
-
-        // A
         this.limit = _limit;
     }
 
     // Gets
-    public int getCurrentPos(){
+    public int getCurrentPos() {
         return this.currentPosition;
     }
-    public int getLimit(){
+    public int getLimit()       {
         return this.limit;
     }
-
-    public int getRealLimit(){
+    public int getRealLimit()   {
         return this.limit - 1;
     }
 
-
     // Sets
-    public void setCurrentPos(){}
-    public void setLimit(){};
-
+    public void setCurrentPos(int newPos){
+        validAddress(newPos);
+        this.currentPosition = newPos;
+    }
 
     // Methods
-    public void nextPos();
-    public void jumpTo(int address);
+    public void nextPos(){
+        validAddress(this.currentPosition + 1);
+        this.currentPosition++;
+    }
+    public void jumpTo(int address){
+        validAddress(address);
+        this.setCurrentPos(address);
+    }
 
-
-
+    private Boolean validAddress(int addr){
+        if(addr < 0 || addr> this.limit){
+            throw new Error("[PC-validAdress-err]: O endereço '" + addr + "' não é válido!");
+        }
+        return true;
+    }
 }
