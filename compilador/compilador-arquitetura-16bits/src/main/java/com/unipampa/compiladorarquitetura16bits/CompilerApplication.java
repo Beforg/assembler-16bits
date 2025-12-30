@@ -10,10 +10,11 @@ import java.io.IOException;
 public class CompilerApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(CompilerApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(CompilerApplication.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Compilador Arquitetura 16 bits");
+        stage.setTitle("Compilador para Arquitetura 16 bits");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 }

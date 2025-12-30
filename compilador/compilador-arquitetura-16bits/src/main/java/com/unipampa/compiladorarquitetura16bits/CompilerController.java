@@ -10,9 +10,14 @@ public class CompilerController {
     @FXML
     private TextArea codingArea;
 
+    private final Parser parser;
+
+    public CompilerController () {
+        this.parser = new Parser();
+    }
+
     @FXML
     private void action() {
-        Parser parser = new Parser();
         String code = parser.parse(codingArea.getText());
         System.out.println(code);
     }
