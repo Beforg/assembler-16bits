@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane prefHeight="621.0" prefWidth="728.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unipampa.compiladorarquitetura16bits.CompilerController">
+   <children>
+      <GridPane fx:id="gp_regs" layoutX="2.0" layoutY="282.0" prefHeight="325.0" prefWidth="160.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" maxWidth="76.0" minWidth="10.0" prefWidth="74.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="77.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="R0:" />
+            <Label text="R1:" GridPane.rowIndex="1" />
+            <Label text="R2:" GridPane.rowIndex="2" />
+            <Label text="R3:" GridPane.rowIndex="3" />
+            <Label text="R4:" GridPane.rowIndex="4" />
+            <Label text="R5:" GridPane.rowIndex="5" />
+            <Label text="R6:" GridPane.rowIndex="6" />
+            <Label text="R7:" GridPane.rowIndex="7" />
+            <Label text="PC:" GridPane.rowIndex="8" />
+            <Label text="0" GridPane.columnIndex="1" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+         </children>
+      </GridPane>
+      <TextArea fx:id="codingArea" layoutX="164.0" layoutY="6.0" prefHeight="477.0" prefWidth="564.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0" />
+      <Button layoutX="15.0" layoutY="40.0" mnemonicParsing="false" onAction="#action" text="Play" />
+      <MenuBar layoutX="7.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Menu">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Novo" />
+                  <MenuItem mnemonicParsing="false" text="Salvar" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Sobre">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Pane layoutX="15.0" layoutY="149.0" prefHeight="75.0" prefWidth="131.0">
+         <children>
+            <RadioButton layoutX="15.0" layoutY="14.0" mnemonicParsing="false" text="Registradores" />
+            <RadioButton layoutX="15.0" layoutY="44.0" mnemonicParsing="false" text="Memória" />
+         </children>
+      </Pane>
+      <Button layoutX="63.0" layoutY="40.0" mnemonicParsing="false" text="Debug" />
+      <Line endX="30.0" endY="49.0" layoutX="115.0" layoutY="186.0" startX="-100.0" startY="49.0" stroke="#c9c9c9" />
+      <Line endX="30.0" endY="49.0" layoutX="115.0" layoutY="31.0" startX="-100.0" startY="49.0" stroke="#c9c9c9" />
+      <Label layoutX="37.0" layoutY="249.0" text="Registradores" />
+   </children>
+</AnchorPane>
