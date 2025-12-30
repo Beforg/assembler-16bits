@@ -6,7 +6,15 @@ public enum CompiladorSintaxe {
     ATRIBUICAO("="),
     SOMA("+"),
     SUBTRACAO("-"),
-    MULTIPLICACAO("*");
+    MULTIPLICACAO("*"),
+    SE("se"),
+    SENAO("senao"),
+    ENQUANTO("enquanto"),
+    FIM("fim"),
+    PARA("para"),
+    ATE("ate"),
+    IGUALDADE("=="),
+    DESIGUALDADE("!=");
     
     private String sintaxeEmString;
     
@@ -14,7 +22,7 @@ public enum CompiladorSintaxe {
         this.sintaxeEmString = sintaxeEmString;
     }
     
-    public String getSintaxe() {
+    public String getSintaxeEmString() {
         return sintaxeEmString;
     }
     
