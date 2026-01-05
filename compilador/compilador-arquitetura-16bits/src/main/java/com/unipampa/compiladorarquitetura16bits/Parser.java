@@ -13,26 +13,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Parser {
-    private final Map<String, String> symbolTable = new HashMap<>();
+    private final Map<String, String> symbolTable;
     private final int MAX_INSTRUCTIONS = 15;
-
-
-
     private final Deque<IfLabels> ifLabelStack = new ArrayDeque<>();
 
-    private int registradorAtualLivre = 0;
+    public Parser(Map<String, String> symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 
     private static class IfLabels {
         final String thenLabel;
         final String elseLabel;
         final String endLabel;
+        final boolean hasElse;
+        final int endLineIndex;
 
         IfLabels(String thenLabel, String elseLabel, String endLabel) {
             this.thenLabel = thenLabel;
             this.elseLabel = elseLabel;
             this.endLabel = endLabel;
+            this.hasElse = (elseLabel != null);
+            this.endLineIndex = -1;
+        }
+
+        IfLabels(String thenLabel, String endLabel, int endLineIndex) {
+            this.thenLabel = thenLabel;
+            this.elseLabel = null;
+            this.endLabel = endLabel;
+            this.hasElse = false;
+            this.endLineIndex = endLineIndex;
         }
     }
+
+    private int registradorAtualLivre = 0;
+
 
     public String parse(String codigoFonte) {
         StringBuilder codigoAsm = new StringBuilder();
@@ -40,6 +54,18 @@ public class Parser {
 
         for (int i = 0; i < linhas.length; i++) {
             String linha = linhas[i].trim();
+
+            if (linha.equals("}") || linha.equals("};")) {
+                if (!ifLabelStack.isEmpty()) {
+                    IfLabels top = ifLabelStack.peek();
+                    if (!top.hasElse && top.endLineIndex == i) {
+                        // pop and emit FIM_SE label
+                        ifLabelStack.pop();
+                        codigoAsm.append(top.endLabel).append(":\n");
+                        continue;
+                    }
+                }
+            }
 
             if (linha.isEmpty() || linha.startsWith("//")) {
                 continue;
@@ -50,26 +76,7 @@ public class Parser {
                 registradorAtualLivre++;
 
             } else if (linha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString()) && !linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
-                if (sePosuiSenao(linhas, linha, i)) {
-                    String operandoEsquerdo = CondicionalUtils.extrairOperandoEsquerdo(linha);
-                    String operandoDireito = CondicionalUtils.extrairOperandoDireito(linha);
-                    String operadorCondicionalOpcode = CondicionalUtils.extrairOperadorCondicional(linha);
-
-                    String labelElse = LabelGenerator.gerarLabel(LabelsCompilador.SENAO_INICIO);
-                    String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
-                    String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
-                    ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
-
-                    operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
-                    operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
-
-                    montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
-                    montarInstrucaoJump(codigoAsm, labelElse);
-                    codigoAsm.append(labelThen).append(":\n");
-
-                } else {
-                    codigoAsm.append("// Início do bloco SE sem SENÃO\n");
-                }
+                processarInstrucaoSe(linha, linhas, i, codigoAsm);
             } else if (linha.trim().contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                 if (ifLabelStack.isEmpty()) {
                     throw new IllegalStateException("Encontrado 'senao' sem 'se' correspondente.");
@@ -81,6 +88,53 @@ public class Parser {
                 int fimSenao = montarInstrucaoSenao(i, linhas, codigoAsm, labels.endLabel);
                 i = fimSenao;
                 codigoAsm.append(labels.endLabel).append(":\n");
+
+            } else if (linha.contains(CompiladorSintaxe.ENQUANTO.getSintaxeEmString())) {
+                String verificarSeLike = linha.replaceFirst("enquanto", "se");
+                CondicionalUtils.verificarEstruturaDaCondicao(verificarSeLike);
+
+                String operandoEsquerdo = CondicionalUtils.extrairOperandoEsquerdo(verificarSeLike);
+                String operandoDireito = CondicionalUtils.extrairOperandoDireito(verificarSeLike);
+                String operadorCondicionalOpcode = CondicionalUtils.extrairOperadorCondicional(verificarSeLike);
+                String labelInicio = LabelGenerator.gerarLabel(LabelsCompilador.ENQUANTO_INICIO);
+                String labelFim = LabelGenerator.gerarLabel(LabelsCompilador.FIM_ENQUANTO);
+
+                // label de verificação
+                codigoAsm.append(labelInicio).append(":\n");
+
+                // inverter BEQ <-> BNE para saltar ao fim quando a condição for falsa
+                String opcodeParaSaltarAoFim;
+                if (Opcode.BEQ.getCode().equals(operadorCondicionalOpcode)) {
+                    opcodeParaSaltarAoFim = Opcode.BNE.getCode();
+                } else {
+                    opcodeParaSaltarAoFim = Opcode.BEQ.getCode();
+                }
+
+                operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
+                operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+
+                // se condição falsa -> salta para labelFim
+                montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, opcodeParaSaltarAoFim, labelFim);
+
+                // processa corpo do enquanto (linhas entre i+1 e fechamento)
+                int endLineIndex = buscarFechamentoDeChaves(linhas, i);
+                int j = i + 1;
+                while (j < endLineIndex) {
+                    String atual = linhas[j].trim();
+                    if (atual.isEmpty() || atual.startsWith("//")) { j++; continue; }
+                    processLinhaBasica(atual, codigoAsm);
+                    j++;
+                }
+
+                // volta para verificação
+                montarInstrucaoJump(codigoAsm, labelInicio);
+                codigoAsm.append(labelFim).append(":\n");
+
+                // pular para a linha depois do fechamento do bloco
+                i = endLineIndex;
+
+            } else if (linha.contains(CompiladorSintaxe.PARA.getSintaxeEmString())) {
+                throw new UnsupportedOperationException("Estrutura 'para' não implementada ainda.");
 
             } else if (linha.contains(CompiladorSintaxe.ATRIBUICAO.getSintaxeEmString()) ) {
 
@@ -105,11 +159,76 @@ public class Parser {
                     montarInstrucaoMultiplicacao(expressao, "\\*", codigoAsm, Opcode.MUL, registradorDaVariavelUsada);
                 }
 
+            } else {
+                throw new IllegalArgumentException("Linha não reconhecida: " + linha);
             }
 
 
         }
         return codigoAsm.toString();
+    }
+
+    private void processarInstrucaoSe(String linha, String[] linhas, int i, StringBuilder codigoAsm) {
+        String operandoEsquerdo = CondicionalUtils.extrairOperandoEsquerdo(linha);
+        String operandoDireito = CondicionalUtils.extrairOperandoDireito(linha);
+        String operadorCondicionalOpcode = CondicionalUtils.extrairOperadorCondicional(linha);
+
+        if (sePosuiSenao(linhas, linha, i)) {
+            String labelElse = LabelGenerator.gerarLabel(LabelsCompilador.SENAO_INICIO);
+            String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
+            String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
+            ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
+
+            operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
+            operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+
+            montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
+            montarInstrucaoJump(codigoAsm, labelElse);
+            codigoAsm.append(labelThen).append(":\n");
+
+        } else {
+            String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
+            String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
+
+            // find the closing brace line index for this then-block so we can emit the end label later
+            int endLineIndex = buscarFechamentoDeChaves(linhas, i);
+
+            // push a marker so when we reach the closing brace we know to write the end label
+            ifLabelStack.push(new IfLabels(labelThen, labelEnd, endLineIndex));
+
+            operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
+            operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+
+            montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
+            montarInstrucaoJump(codigoAsm, labelEnd);
+            codigoAsm.append(labelThen).append(":\n");
+        }
+    }
+
+    private int buscarFechamentoDeChaves(String[] linhas, int startIndex) {
+        int depth = 0;
+        boolean foundOpening = false;
+        for (int j = startIndex; j < linhas.length; j++) {
+            String l = linhas[j];
+            // count opens and closes on the line
+            int opens = countChar(l, '{');
+            int closes = countChar(l, '}');
+            if (opens > 0) foundOpening = true;
+            depth += opens - closes;
+            if (foundOpening && depth == 0) {
+                return j; // line index of the closing brace
+            }
+        }
+        // if not found, return startIndex (fallback)
+        return startIndex;
+    }
+
+    private int countChar(String s, char c) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) count++;
+        }
+        return count;
     }
 
     private String montarOperador(String operador, Map<String, String> symbolTable, StringBuilder codigoAsm, int registradorAtualLivre) {

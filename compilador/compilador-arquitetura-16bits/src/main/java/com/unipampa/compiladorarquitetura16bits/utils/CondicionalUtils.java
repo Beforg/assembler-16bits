@@ -10,8 +10,17 @@ public final class CondicionalUtils {
 
     private static final Pattern CONDITION =
             Pattern.compile("se\\s*\\(\\s*(.*?)\\s*(==|!=)\\s*(.*?)\\s*\\)\\s*\\{?");
+    private static final Pattern FOR_CONDITION =
+            Pattern.compile("para\\s*\\(\\s*(.*?)\\s*(==|!=)\\s*(.*?)\\s*\\)\\s*\\{?");
 
     private CondicionalUtils() {}
+
+    public static void verificarEstruturaDaCondicaoPara(String linha) {
+        Matcher matcher = FOR_CONDITION.matcher(linha);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Estrutura da condicional 'para' inválida: " + linha);
+        }
+    }
 
     public static void verificarEstruturaDaCondicao(String linha) {
         Matcher matcher = CONDITION.matcher(linha);
