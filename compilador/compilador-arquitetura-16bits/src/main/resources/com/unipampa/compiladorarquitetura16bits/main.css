@@ -1,0 +1,29 @@
+* {
+    -fx-cor-primaria: #eefbee;
+    -fx-fonte-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tela-principal {
+    -fx-font-family: -fonte-principal;
+    -fx-background-color: -fx-cor-primaria;
+}
+
+.rodape {
+    -fx-background-color: -fx-cor-primaria;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+.rodape-error {
+    -fx-background-color: #c0392b;
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+.label-rodape {
+    -fx-font-size: 14px;
+    -fx-text-fill: #000000;
+
+}
