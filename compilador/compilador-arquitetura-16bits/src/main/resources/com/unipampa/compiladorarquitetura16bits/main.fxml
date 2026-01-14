@@ -24,7 +24,7 @@
             <Image url="@unipampa-v.jpg" />
          </image>
       </ImageView>
-      <TextArea fx:id="codingArea" layoutX="164.0" layoutY="26.0" prefHeight="586.0" prefWidth="564.0" AnchorPane.bottomAnchor="38.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
+      <TextArea fx:id="codingArea" layoutX="164.0" layoutY="26.0" prefHeight="586.0" prefWidth="564.0" promptText="Digite seu código aqui..." styleClass="code-editor" AnchorPane.bottomAnchor="38.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
       <Button layoutX="15.0" layoutY="40.0" mnemonicParsing="false" onAction="#action" prefHeight="26.0" prefWidth="131.0" text="Compilar" />
       <MenuBar layoutX="7.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>

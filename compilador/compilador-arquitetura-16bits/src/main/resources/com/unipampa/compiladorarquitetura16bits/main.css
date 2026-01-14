@@ -27,3 +27,102 @@
     -fx-text-fill: #000000;
 
 }
+
+/* ========================================= */
+/* ========== EDITOR DE CÓDIGO ============ */
+/* ========================================= */
+
+.code-editor {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #d4d4d4;
+    -fx-font-family: "Consolas", "Monaco", "Courier New", monospace;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-highlight-fill: #264f78;
+    -fx-highlight-text-fill: #ffffff;
+}
+
+/* SEM borda quando focado */
+.code-editor:focused {
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1px;
+}
+
+.code-editor .content {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 5px;
+}
+
+.code-editor .scroll-pane {
+    -fx-background-color: #1e1e1e;
+}
+
+.code-editor .scroll-pane .viewport {
+    -fx-background-color: #1e1e1e;
+}
+
+.code-editor .scroll-pane .corner {
+    -fx-background-color: #1e1e1e;
+}
+
+/* Scrollbar vertical */
+.code-editor .scroll-bar:vertical {
+    -fx-background-color: #1e1e1e;
+    -fx-pref-width: 12px;
+}
+
+.code-editor .scroll-bar:vertical .track {
+    -fx-background-color: #1e1e1e;
+}
+
+.code-editor .scroll-bar:vertical .thumb {
+    -fx-background-color: #424242;
+    -fx-background-radius: 6px;
+}
+
+.code-editor .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #4e4e4e;
+}
+
+.code-editor .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #5a5a5a;
+}
+
+.code-editor .scroll-bar:vertical .increment-button,
+.code-editor .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Scrollbar horizontal */
+.code-editor .scroll-bar:horizontal {
+    -fx-background-color: #1e1e1e;
+    -fx-pref-height: 12px;
+}
+
+.code-editor .scroll-bar:horizontal .track {
+    -fx-background-color: #1e1e1e;
+}
+
+.code-editor .scroll-bar:horizontal .thumb {
+    -fx-background-color: #424242;
+    -fx-background-radius: 6px;
+}
+
+.code-editor .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #4e4e4e;
+}
+
+.code-editor .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: #5a5a5a;
+}
+
+.code-editor .scroll-bar:horizontal .increment-button,
+.code-editor .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
