@@ -40,4 +40,11 @@ public class LabelGenerator {
         }
         return String.join("\n", result);
     }
+
+    /**
+     * Reseta o contador de labels para uma nova compilação
+     */
+    public static void reset() {
+        labelCount = 0;
+    }
 }

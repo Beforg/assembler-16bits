@@ -1,24 +1,37 @@
 package com.unipampa.compiladorarquitetura16bits;
 
+import com.unipampa.compiladorarquitetura16bits.memory.AllocationResult;
+import com.unipampa.compiladorarquitetura16bits.memory.MemoryManager;
+import com.unipampa.compiladorarquitetura16bits.memory.VariableLocationTracker;
 import com.unipampa.compiladorarquitetura16bits.model.CompiladorSintaxe;
 import com.unipampa.compiladorarquitetura16bits.model.Opcode;
+import com.unipampa.compiladorarquitetura16bits.model.Registrador;
+import com.unipampa.compiladorarquitetura16bits.model.Variavel;
 import com.unipampa.compiladorarquitetura16bits.utils.CondicionalUtils;
 import com.unipampa.compiladorarquitetura16bits.utils.IntegerUtils;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelGenerator;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelsCompilador;
+import com.unipampa.compiladorarquitetura16bits.utils.RegisterAllocator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Parser {
-    private final Map<String, String> symbolTable;
+    private final Map<Variavel, Registrador> symbolTable;
     private final int MAX_INSTRUCTIONS = 15;
     private final Deque<IfLabels> ifLabelStack = new ArrayDeque<>();
 
-    public Parser(Map<String, String> symbolTable) {
+    // Componentes de gerenciamento de memória e registradores
+    private final MemoryManager memoryManager;
+    private final VariableLocationTracker locationTracker;
+    private final RegisterAllocator allocator;
+
+    public Parser(Map<Variavel, Registrador> symbolTable) {
         this.symbolTable = symbolTable;
+        this.memoryManager = new MemoryManager();
+        this.locationTracker = new VariableLocationTracker();
+        this.allocator = new RegisterAllocator(symbolTable, memoryManager, locationTracker);
     }
 
     private static class IfLabels {
@@ -47,6 +60,46 @@ public class Parser {
 
     private int registradorAtualLivre = 0;
 
+    // Método auxiliar para buscar Registrador por nome de variável
+    private Registrador findRegistradorByVarName(String varName) {
+        for (Map.Entry<Variavel, Registrador> entry : symbolTable.entrySet()) {
+            if (entry.getKey() != null && varName.equals(entry.getKey().getNome())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Busca ou aloca registrador para uma variável
+     * Se a variável está na memória, faz reload automático
+     *
+     * @param varName Nome da variável
+     * @param codigoAsm StringBuilder para adicionar instruções de reload
+     * @return Registrador com a variável
+     */
+    private Registrador getOrLoadRegistrador(String varName, StringBuilder codigoAsm) {
+        // 1. Verificar se já está em registrador
+        Registrador reg = findRegistradorByVarName(varName);
+        if (reg != null) {
+            return reg;
+        }
+
+        // 2. Verificar se está na memória
+        VariableLocationTracker.LocationInfo location = locationTracker.locate(varName);
+        if (location.location == VariableLocationTracker.Location.MEMORY) {
+            // Fazer reload da memória
+            AllocationResult result = allocator.allocate(varName, 0);
+
+            // Adicionar instruções de reload (pode incluir STA de spill + LDA de reload)
+            result.getInstructions().forEach(codigoAsm::append);
+
+            return result.getRegistrador();
+        }
+
+        // 3. Variável não declarada
+        return null;
+    }
 
     public String parse(String codigoFonte) {
         StringBuilder codigoAsm = new StringBuilder();
@@ -59,7 +112,6 @@ public class Parser {
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
                     if (!top.hasElse && top.endLineIndex == i) {
-                        // pop and emit FIM_SE label
                         ifLabelStack.pop();
                         codigoAsm.append(top.endLabel).append(":\n");
                         continue;
@@ -72,8 +124,29 @@ public class Parser {
             }
 
             if (linha.startsWith(CompiladorSintaxe.INTEIRO.getSintaxeEmString())) {
-                montarInstrucaoLoadInteiro(linha, symbolTable, registradorAtualLivre, codigoAsm);
-                registradorAtualLivre++;
+                // Usar RegisterAllocator com LRU ao invés de alocação manual
+                String[] partes = linha.replace(";", "").split("=");
+                String nomeVariavel = partes[0].replace(CompiladorSintaxe.INTEIRO.getSintaxeEmString(), "").trim();
+
+                int valorInicial = 0;
+                if (partes.length == 2) {
+                    valorInicial = Integer.parseInt(partes[1].trim());
+                    validateInt(valorInicial);
+                }
+
+                // Alocar registrador com LRU automático
+                AllocationResult result = allocator.allocate(nomeVariavel, valorInicial);
+
+                // Adicionar instruções de reload se necessário (quando variável estava na memória)
+                result.getInstructions().forEach(codigoAsm::append);
+
+                // Gerar instrução LDA
+                Registrador reg = result.getRegistrador();
+                codigoAsm.append(Opcode.LDA.getCode())
+                        .append(reg.getNome())
+                        .append(",")
+                        .append(valorInicial)
+                        .append("\n");
 
             } else if (linha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString()) && !linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                 processarInstrucaoSe(linha, linhas, i, codigoAsm);
@@ -85,8 +158,7 @@ public class Parser {
                 // salta do bloco then para o fim usando a mesma label
                 codigoAsm.append(Opcode.JMP.getCode()).append(labels.endLabel).append("\n");
                 codigoAsm.append(labels.elseLabel).append(":\n");
-                int fimSenao = montarInstrucaoSenao(i, linhas, codigoAsm, labels.endLabel);
-                i = fimSenao;
+                i = montarInstrucaoSenao(i, linhas, codigoAsm, labels.endLabel);
                 codigoAsm.append(labels.endLabel).append(":\n");
 
             } else if (linha.contains(CompiladorSintaxe.ENQUANTO.getSintaxeEmString())) {
@@ -110,8 +182,8 @@ public class Parser {
                     opcodeParaSaltarAoFim = Opcode.BEQ.getCode();
                 }
 
-                operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
-                operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+                operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
+                operandoDireito = montarOperador(operandoDireito, codigoAsm, registradorAtualLivre);
 
                 // se condição falsa -> salta para labelFim
                 montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, opcodeParaSaltarAoFim, labelFim);
@@ -141,22 +213,26 @@ public class Parser {
                 String[] partes = linha.replace(";", "").split("=");
                 String variavelUsada = partes[0].trim();
                 String expressao = partes[1].trim();
-                String registradorDaVariavelUsada = symbolTable.get(variavelUsada);
+
+                // Usar getOrLoadRegistrador para suportar variáveis na memória
+                Registrador registradorDaVariavelUsada = getOrLoadRegistrador(variavelUsada, codigoAsm);
 
                 if (registradorDaVariavelUsada == null) {
                     throw new IllegalArgumentException("Variável " + variavelUsada + " não declarada.");
                 }
 
+                String nomeRegistradorUsado = registradorDaVariavelUsada.getNome();
+
                 if (expressao.contains(CompiladorSintaxe.SOMA.getSintaxeEmString())) {
-                    montarInstrucaoSoma(expressao, codigoAsm, registradorDaVariavelUsada, registradorAtualLivre);
+                    montarInstrucaoSoma(expressao, codigoAsm, nomeRegistradorUsado, registradorAtualLivre);
                 }
 
                 else if (expressao.contains(CompiladorSintaxe.SUBTRACAO.getSintaxeEmString())) {
-                    montarInstrucaoSubtracao(expressao, "-", codigoAsm, Opcode.SUB, registradorDaVariavelUsada);
+                    montarInstrucaoSubtracao(expressao, "-", codigoAsm, Opcode.SUB, nomeRegistradorUsado);
                 }
 
                 else if (expressao.contains(CompiladorSintaxe.MULTIPLICACAO.getSintaxeEmString())) {
-                    montarInstrucaoMultiplicacao(expressao, "\\*", codigoAsm, Opcode.MUL, registradorDaVariavelUsada);
+                    montarInstrucaoMultiplicacao(expressao, "\\*", codigoAsm, Opcode.MUL, nomeRegistradorUsado);
                 }
 
             } else {
@@ -179,8 +255,8 @@ public class Parser {
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
             ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
 
-            operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
-            operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+            operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
+            operandoDireito = montarOperador(operandoDireito, codigoAsm, registradorAtualLivre);
 
             montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
             montarInstrucaoJump(codigoAsm, labelElse);
@@ -196,8 +272,8 @@ public class Parser {
             // push a marker so when we reach the closing brace we know to write the end label
             ifLabelStack.push(new IfLabels(labelThen, labelEnd, endLineIndex));
 
-            operandoEsquerdo = montarOperador(operandoEsquerdo, symbolTable, codigoAsm, registradorAtualLivre);
-            operandoDireito = montarOperador(operandoDireito, symbolTable, codigoAsm, registradorAtualLivre);
+            operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
+            operandoDireito = montarOperador(operandoDireito, codigoAsm, registradorAtualLivre);
 
             montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
             montarInstrucaoJump(codigoAsm, labelEnd);
@@ -231,7 +307,7 @@ public class Parser {
         return count;
     }
 
-    private String montarOperador(String operador, Map<String, String> symbolTable, StringBuilder codigoAsm, int registradorAtualLivre) {
+    private String montarOperador(String operador, StringBuilder codigoAsm, int registradorAtualLivre) {
         String registradorFonte;
 
         if (IntegerUtils.verificaSeEhInteiro(operador)) {
@@ -245,9 +321,12 @@ public class Parser {
                     .append("\n");
             return registradorFonte;
         } else {
-            String registradorDaVariavel = symbolTable.get(operador);
-            validateRegs(registradorDaVariavel, registradorDaVariavel);
-            return registradorDaVariavel;
+            // Usar getOrLoadRegistrador para suportar variáveis na memória
+            Registrador registradorDaVariavel = getOrLoadRegistrador(operador, codigoAsm);
+            if (registradorDaVariavel == null) {
+                throw new IllegalArgumentException("Variável " + operador + " não declarada.");
+            }
+            return registradorDaVariavel.getNome();
         }
     }
 
@@ -280,22 +359,45 @@ public class Parser {
 
     private void processLinhaBasica(String linha, StringBuilder codigoAsm) {
         if (linha.startsWith(CompiladorSintaxe.INTEIRO.getSintaxeEmString())) {
-            montarInstrucaoLoadInteiro(linha, symbolTable, registradorAtualLivre, codigoAsm);
-            registradorAtualLivre++;
+            // Usar RegisterAllocator com LRU
+            String[] partes = linha.replace(";", "").split("=");
+            String nomeVariavel = partes[0].replace(CompiladorSintaxe.INTEIRO.getSintaxeEmString(), "").trim();
+
+            int valorInicial = 0;
+            if (partes.length == 2) {
+                valorInicial = Integer.parseInt(partes[1].trim());
+                validateInt(valorInicial);
+            }
+
+            // Alocar com LRU automático
+            AllocationResult result = allocator.allocate(nomeVariavel, valorInicial);
+            result.getInstructions().forEach(codigoAsm::append);
+
+            Registrador reg = result.getRegistrador();
+            codigoAsm.append(Opcode.LDA.getCode())
+                    .append(reg.getNome())
+                    .append(",")
+                    .append(valorInicial)
+                    .append("\n");
+
         } else if (linha.contains(CompiladorSintaxe.ATRIBUICAO.getSintaxeEmString())) {
             String[] partes = linha.replace(";", "").split("=");
             String variavelUsada = partes[0].trim();
             String expressao = partes[1].trim();
-            String registradorDaVariavelUsada = symbolTable.get(variavelUsada);
+
+            // Usar getOrLoadRegistrador para suportar variáveis na memória
+            Registrador registradorDaVariavelUsada = getOrLoadRegistrador(variavelUsada, codigoAsm);
+
             if (registradorDaVariavelUsada == null) {
                 throw new IllegalArgumentException("Variável " + variavelUsada + " não declarada.");
             }
+            String nomeRegistradorUsado = registradorDaVariavelUsada.getNome();
             if (expressao.contains(CompiladorSintaxe.SOMA.getSintaxeEmString())) {
-                montarInstrucaoSoma(expressao, codigoAsm, registradorDaVariavelUsada, registradorAtualLivre);
+                montarInstrucaoSoma(expressao, codigoAsm, nomeRegistradorUsado, registradorAtualLivre);
             } else if (expressao.contains(CompiladorSintaxe.SUBTRACAO.getSintaxeEmString())) {
-                montarInstrucaoSubtracao(expressao, "-", codigoAsm, Opcode.SUB, registradorDaVariavelUsada);
+                montarInstrucaoSubtracao(expressao, "-", codigoAsm, Opcode.SUB, nomeRegistradorUsado);
             } else if (expressao.contains(CompiladorSintaxe.MULTIPLICACAO.getSintaxeEmString())) {
-                montarInstrucaoMultiplicacao(expressao, "\\*", codigoAsm, Opcode.MUL, registradorDaVariavelUsada);
+                montarInstrucaoMultiplicacao(expressao, "\\*", codigoAsm, Opcode.MUL, nomeRegistradorUsado);
             }
         }
     }
@@ -353,10 +455,18 @@ public class Parser {
 
     private void montarInstrucaoMultiplicacao(String expressao, String regex, StringBuilder codigoAsm, Opcode mul, String registradorDaVariavelUsada) {
         String[] ops = expressao.split(regex);
-        String reg1 = symbolTable.get(ops[0].trim());
-        String reg2 = symbolTable.get(ops[1].trim());
 
-        validateRegs(reg1, reg2);
+        // Usar getOrLoadRegistrador para suportar variáveis na memória
+        Registrador reg1Obj = getOrLoadRegistrador(ops[0].trim(), codigoAsm);
+        Registrador reg2Obj = getOrLoadRegistrador(ops[1].trim(), codigoAsm);
+
+        if (reg1Obj == null || reg2Obj == null) {
+            throw new IllegalArgumentException("Variável não declarada na expressão.");
+        }
+
+        String reg1 = reg1Obj.getNome();
+        String reg2 = reg2Obj.getNome();
+
         codigoAsm.append(mul.getCode())
                 .append(registradorDaVariavelUsada)
                 .append(",")
@@ -368,10 +478,18 @@ public class Parser {
 
     private void montarInstrucaoSubtracao(String expressao, String regex, StringBuilder codigoAsm, Opcode sub, String registradorDaVariavelUsada) {
         String[] ops = expressao.split(regex);
-        String reg1 = symbolTable.get(ops[0].trim());
-        String reg2 = symbolTable.get(ops[1].trim());
 
-        validateRegs(reg1, reg2);
+        // Usar getOrLoadRegistrador para suportar variáveis na memória
+        Registrador reg1Obj = getOrLoadRegistrador(ops[0].trim(), codigoAsm);
+        Registrador reg2Obj = getOrLoadRegistrador(ops[1].trim(), codigoAsm);
+
+        if (reg1Obj == null || reg2Obj == null) {
+            throw new IllegalArgumentException("Variável não declarada na expressão.");
+        }
+
+        String reg1 = reg1Obj.getNome();
+        String reg2 = reg2Obj.getNome();
+
         codigoAsm.append(sub.getCode())
                 .append(registradorDaVariavelUsada)
                 .append(",")
@@ -403,16 +521,24 @@ public class Parser {
 
                 } else {
                     if (contagemParaMontarRegs == 0) {
-                        registradorOperando1 = symbolTable.get(valorOuVariavelDaExpressao.trim());
-                        validateRegs(registradorOperando1, registradorOperando1);
+                        // Usar getOrLoadRegistrador para suportar variáveis na memória
+                        Registrador reg1Obj = getOrLoadRegistrador(valorOuVariavelDaExpressao.trim(), codigoAsm);
+                        if (reg1Obj == null) {
+                            throw new IllegalArgumentException("Variável " + valorOuVariavelDaExpressao.trim() + " não declarada.");
+                        }
+                        registradorOperando1 = reg1Obj.getNome();
                         nomeDaVariavel = valorOuVariavelDaExpressao.trim();
                         contagemParaMontarRegs++; // incrementa após setar o primeiro operando
                         continue;
                     }
 
                     if (contagemParaMontarRegs == 1 && registradorOperando1 != null) {
-                        registradorOperando2 = symbolTable.get(valorOuVariavelDaExpressao.trim());
-                        validateRegs(registradorOperando1, registradorOperando2);
+                        // Usar getOrLoadRegistrador para suportar variáveis na memória
+                        Registrador reg2Obj = getOrLoadRegistrador(valorOuVariavelDaExpressao.trim(), codigoAsm);
+                        if (reg2Obj == null) {
+                            throw new IllegalArgumentException("Variável " + valorOuVariavelDaExpressao.trim() + " não declarada.");
+                        }
+                        registradorOperando2 = reg2Obj.getNome();
                         codigoAsm.append(Opcode.SUM.getCode())
                                 .append(registradorDaVariavelUsada)
                                 .append(",")
@@ -429,7 +555,6 @@ public class Parser {
             }
             if (somaDasConstantes > 0) {
                 registradorParaImediato = "R" + (registradorAtualLivre);
-                validateRegs(registradorParaImediato, registradorParaImediato);
                 codigoAsm.append(Opcode.LDA.getCode())
                         .append(registradorParaImediato)
                         .append(",")
@@ -446,8 +571,12 @@ public class Parser {
                         .append("\n");
             }
             if (contagemParaMontarRegs == 1 && !nomeDaVariavel.isEmpty()) {
-                String registradorRestante = symbolTable.get(nomeDaVariavel);
-                validateRegs(registradorRestante, registradorRestante);
+                // Usar getOrLoadRegistrador para suportar variáveis na memória
+                Registrador regRestanteObj = getOrLoadRegistrador(nomeDaVariavel, codigoAsm);
+                if (regRestanteObj == null) {
+                    throw new IllegalArgumentException("Variável " + nomeDaVariavel + " não declarada.");
+                }
+                String registradorRestante = regRestanteObj.getNome();
                 codigoAsm.append(Opcode.SUM.getCode())
                         .append(registradorDaVariavelUsada)
                         .append(",")
@@ -457,19 +586,61 @@ public class Parser {
                         .append("\n");
             }
         } else {
+            // Tratar soma de dois termos (variável + variável ou variável + inteiro)
 
-            // todo: tratar soma de dois termos (variável + variável ou variável + inteiro)
+            String termo1 = elementosDaExpressao[0].trim();
+            String termo2 = elementosDaExpressao[1].trim();
 
-            String reg1 = symbolTable.get(elementosDaExpressao[0].trim());
-            String reg2 = symbolTable.get(elementosDaExpressao[1].trim());
+            String reg1Nome;
+            String reg2Nome;
 
-            validateRegs(reg1, reg2);
+            // Processar primeiro termo
+            if (IntegerUtils.verificaSeEhInteiro(termo1)) {
+                // É um inteiro - carregar em registrador temporário
+                int valor1 = Integer.parseInt(termo1);
+                validateInt(valor1);
+                reg1Nome = "R" + registradorAtualLivre;
+                codigoAsm.append(Opcode.LDA.getCode())
+                        .append(reg1Nome)
+                        .append(",")
+                        .append(valor1)
+                        .append("\n");
+            } else {
+                // É uma variável - buscar registrador ou carregar da memória
+                Registrador reg1 = getOrLoadRegistrador(termo1, codigoAsm);
+                if (reg1 == null) {
+                    throw new IllegalArgumentException("Variável '" + termo1 + "' não declarada na expressão.");
+                }
+                reg1Nome = reg1.getNome();
+            }
+
+            // Processar segundo termo
+            if (IntegerUtils.verificaSeEhInteiro(termo2)) {
+                // É um inteiro - carregar em registrador temporário
+                int valor2 = Integer.parseInt(termo2);
+                validateInt(valor2);
+                reg2Nome = "R" + registradorAtualLivre;
+                codigoAsm.append(Opcode.LDA.getCode())
+                        .append(reg2Nome)
+                        .append(",")
+                        .append(valor2)
+                        .append("\n");
+            } else {
+                // É uma variável - buscar registrador ou carregar da memória
+                Registrador reg2 = getOrLoadRegistrador(termo2, codigoAsm);
+                if (reg2 == null) {
+                    throw new IllegalArgumentException("Variável '" + termo2 + "' não declarada na expressão.");
+                }
+                reg2Nome = reg2.getNome();
+            }
+
+            // Gerar instrução SUM
             codigoAsm.append(Opcode.SUM.getCode())
                     .append(registradorDaVariavelUsada)
                     .append(",")
-                    .append(reg1)
+                    .append(reg1Nome)
                     .append(",")
-                    .append(reg2)
+                    .append(reg2Nome)
                     .append("\n");
         }
     }
@@ -478,7 +649,11 @@ public class Parser {
         return expressa.length > 2;
     }
 
-    private void montarInstrucaoLoadInteiro(String linha, Map<String, String> symbolTable, int regAtual, StringBuilder codigoAsm) {
+    private void montarInstrucaoLoadInteiro(
+            String linha, Map<Variavel, Registrador> symbolTable,
+            int regAtual,
+            StringBuilder codigoAsm) {
+
         int valor;
         String nomeDaNovaVariavel;
         String registradorDaVariavel;
@@ -487,13 +662,23 @@ public class Parser {
         if (variavelEstaInicializada(partes)) {
             nomeDaNovaVariavel = extrairNomeVariavel(partes);
             valor = extrairValorInteiro(partes);
+
+            // MUDAR
+
             registradorDaVariavel = montarRegistradorParaVariavel(regAtual);
-            symbolTable.put(nomeDaNovaVariavel, registradorDaVariavel);
+            Registrador registrador = new Registrador(registradorDaVariavel, valor);
+            Variavel variavelNova = new Variavel(nomeDaNovaVariavel, registrador);
+
+            symbolTable.put(variavelNova, registrador);
             codigoAsm.append(Opcode.LDA.getCode()).append(registradorDaVariavel).append(",").append(valor).append("\n");
         } else {
+
             nomeDaNovaVariavel = extrairNomeVariavel(partes);
             registradorDaVariavel = montarRegistradorParaVariavel(regAtual);
-            symbolTable.put(nomeDaNovaVariavel, registradorDaVariavel);
+            Registrador registrador = new Registrador(registradorDaVariavel, 0);
+            Variavel variavelNova = new Variavel(nomeDaNovaVariavel, registrador);
+
+            symbolTable.put(variavelNova, registrador);
             codigoAsm.append(Opcode.LDA.getCode()).append(registradorDaVariavel).append(",").append("0").append("\n");
         }
 
@@ -529,15 +714,34 @@ public class Parser {
         return partes.length == 2 ;
     }
 
-    private void validateRegs(String reg1, String reg2) {
-        if (reg1 == null || reg2 == null) {
-            throw new IllegalArgumentException("Variável não declarada na expressão.");
-        }
-    }
 
     private void validateInt(int value) {
         if (value < 0 || value > 15) {
             throw new IllegalArgumentException("Valor inteiro fora do intervalo permitido (0-15).");
         }
+    }
+
+    /**
+     * Reseta o estado do parser para uma nova compilação
+     */
+    public void reset() {
+        registradorAtualLivre = 0;
+        ifLabelStack.clear();
+        LabelGenerator.reset();
+        allocator.reset();  // Reseta RegisterAllocator (que reseta MemoryManager e LocationTracker)
+    }
+
+    /**
+     * Retorna o MemoryManager para acesso pela UI
+     */
+    public MemoryManager getMemoryManager() {
+        return memoryManager;
+    }
+
+    /**
+     * Retorna o RegisterAllocator para acesso pela UI
+     */
+    public RegisterAllocator getAllocator() {
+        return allocator;
     }
 }
