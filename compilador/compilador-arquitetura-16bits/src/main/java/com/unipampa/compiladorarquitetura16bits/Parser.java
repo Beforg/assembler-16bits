@@ -108,18 +108,98 @@ public class Parser {
         for (int i = 0; i < linhas.length; i++) {
             String linha = linhas[i].trim();
 
-            if (linha.equals("}") || linha.equals("};")) {
+            // Pular linhas vazias e comentários primeiro
+            if (linha.isEmpty() || linha.startsWith("//")) {
+                continue;
+            }
+
+            // Tratar chaves e senao
+            // Caso 1: "} senao {" na mesma linha
+            if (linha.contains("}") && linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
+                System.out.println("\n=== DEBUG: Encontrado } senao { na mesma linha ===");
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
-                    if (!top.hasElse && top.endLineIndex == i) {
-                        ifLabelStack.pop();
+                    System.out.println("top.hasElse: " + top.hasElse);
+                    System.out.println("top.elseLabel: " + top.elseLabel);
+                    System.out.println("top.endLabel: " + top.endLabel);
+
+                    if (top.hasElse) {
+                        // Adicionar JMP para fim e label SENAO_INICIO
+                        codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
+                        codigoAsm.append(top.elseLabel).append(":\n");
+
+                        System.out.println("Gerou: JMP," + top.endLabel);
+                        System.out.println("Gerou: " + top.elseLabel + ":");
+
+                        // Processar corpo do SENAO
+                        i = montarInstrucaoSenao(i, linhas, codigoAsm, top.endLabel);
+
+                        // Adicionar label de fim
                         codigoAsm.append(top.endLabel).append(":\n");
+                        System.out.println("Gerou: " + top.endLabel + ":");
+
+                        // Remover da stack
+                        ifLabelStack.pop();
                         continue;
                     }
                 }
             }
 
-            if (linha.isEmpty() || linha.startsWith("//")) {
+            // Caso 2: Apenas "}" (fechamento de bloco)
+            if (linha.equals("}") || linha.equals("};")) {
+                System.out.println("\n=== DEBUG: Encontrado } sozinho ===");
+                if (!ifLabelStack.isEmpty()) {
+                    IfLabels top = ifLabelStack.peek();
+                    System.out.println("top.hasElse: " + top.hasElse);
+                    System.out.println("top.endLineIndex: " + top.endLineIndex + " vs i=" + i);
+
+                    // Verificar se a próxima linha contém SENAO
+                    boolean proximaLinhaESenao = false;
+                    if (i + 1 < linhas.length) {
+                        String proximaLinha = linhas[i + 1].trim();
+                        System.out.println("Próxima linha [" + (i+1) + "]: '" + proximaLinha + "'");
+                        if (proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
+                            proximaLinhaESenao = true;
+                        }
+                        System.out.println("startsWith 'senao'? " + proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString()));
+                    }
+                    System.out.println("proximaLinhaESenao: " + proximaLinhaESenao);
+
+                    // SE com SENAO (senao na próxima linha)
+                    if (top.hasElse && proximaLinhaESenao) {
+                        System.out.println("Processando SE com SENAO (senao na próxima linha)");
+                        // Adicionar JMP para fim e label SENAO_INICIO
+                        codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
+                        codigoAsm.append(top.elseLabel).append(":\n");
+
+                        System.out.println("Gerou: JMP," + top.endLabel);
+                        System.out.println("Gerou: " + top.elseLabel + ":");
+
+                        // Pular para a próxima linha (que é o SENAO)
+                        i++;
+
+                        // Processar corpo do SENAO
+                        i = montarInstrucaoSenao(i, linhas, codigoAsm, top.endLabel);
+
+                        // Adicionar label de fim
+                        codigoAsm.append(top.endLabel).append(":\n");
+
+                        // Remover da stack
+                        ifLabelStack.pop();
+                        continue;
+                    }
+
+                    // SE sem SENAO
+                    if (!top.hasElse && top.endLineIndex == i) {
+                        ifLabelStack.pop();
+                        codigoAsm.append(top.endLabel).append(":\n");
+                    }
+                }
+                continue; // SEMPRE pular chaves
+            }
+
+            // Caso 3: Abertura de bloco "{"
+            if (linha.equals("{")) {
                 continue;
             }
 
@@ -150,16 +230,6 @@ public class Parser {
 
             } else if (linha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString()) && !linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                 processarInstrucaoSe(linha, linhas, i, codigoAsm);
-            } else if (linha.trim().contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
-                if (ifLabelStack.isEmpty()) {
-                    throw new IllegalStateException("Encontrado 'senao' sem 'se' correspondente.");
-                }
-                IfLabels labels = ifLabelStack.pop();
-                // salta do bloco then para o fim usando a mesma label
-                codigoAsm.append(Opcode.JMP.getCode()).append(labels.endLabel).append("\n");
-                codigoAsm.append(labels.elseLabel).append(":\n");
-                i = montarInstrucaoSenao(i, linhas, codigoAsm, labels.endLabel);
-                codigoAsm.append(labels.endLabel).append(":\n");
 
             } else if (linha.contains(CompiladorSintaxe.ENQUANTO.getSintaxeEmString())) {
                 String verificarSeLike = linha.replaceFirst("enquanto", "se");
@@ -253,6 +323,12 @@ public class Parser {
             String labelElse = LabelGenerator.gerarLabel(LabelsCompilador.SENAO_INICIO);
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
+
+            System.out.println("\n=== DEBUG: SE COM SENAO ===");
+            System.out.println("labelThen: " + labelThen);
+            System.out.println("labelElse: " + labelElse);
+            System.out.println("labelEnd: " + labelEnd);
+
             ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
 
             operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
@@ -262,9 +338,16 @@ public class Parser {
             montarInstrucaoJump(codigoAsm, labelElse);
             codigoAsm.append(labelThen).append(":\n");
 
+            System.out.println("Gerou: BEQ para " + labelThen);
+            System.out.println("Gerou: JMP para " + labelElse);
+
         } else {
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
+
+            System.out.println("\n=== DEBUG: SE SEM SENAO ===");
+            System.out.println("labelThen: " + labelThen);
+            System.out.println("labelEnd: " + labelEnd);
 
             // find the closing brace line index for this then-block so we can emit the end label later
             int endLineIndex = buscarFechamentoDeChaves(linhas, i);
@@ -278,6 +361,9 @@ public class Parser {
             montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
             montarInstrucaoJump(codigoAsm, labelEnd);
             codigoAsm.append(labelThen).append(":\n");
+
+            System.out.println("Gerou: BEQ para " + labelThen);
+            System.out.println("Gerou: JMP para " + labelEnd);
         }
     }
 
@@ -313,7 +399,15 @@ public class Parser {
         if (IntegerUtils.verificaSeEhInteiro(operador)) {
             int valorDoInteiro = Integer.parseInt(operador.trim());
             validateInt(valorDoInteiro);
-            registradorFonte = "R" + registradorAtualLivre;
+
+            // Alocar registrador temporário para a constante usando LRU
+            String nomeTemporario = "_const_" + valorDoInteiro + "_" + System.nanoTime();
+            AllocationResult result = allocator.allocate(nomeTemporario, valorDoInteiro);
+
+            // Adicionar instruções de spill se necessário
+            result.getInstructions().forEach(codigoAsm::append);
+
+            registradorFonte = result.getRegistrador().getNome();
             codigoAsm.append(Opcode.LDA.getCode())
                     .append(registradorFonte)
                     .append(",")
@@ -419,35 +513,50 @@ public class Parser {
             profundidadeDoBloco = 1;
         }
 
+        System.out.println("\n=== DEBUG sePosuiSenao() ===");
+        System.out.println("Verificando SE na linha " + i + ": " + linha);
+
         while (j < linhas.length) {
             String proximaLinha = linhas[j].trim();
-
-
 
             if (proximaLinha.isEmpty() || proximaLinha.startsWith("//")) {
                 j++;
                 continue;
             }
 
-
-            if (proximaLinha.contains("{") && !proximaLinha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) profundidadeDoBloco++;
+            // Atualizar profundidade
+            if (proximaLinha.contains("{") && !proximaLinha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
+                profundidadeDoBloco++;
+            }
             if (proximaLinha.contains("}")) {
                 profundidadeDoBloco = Math.max(0, profundidadeDoBloco - 1);
             }
 
+            System.out.println("  Linha " + j + " (prof=" + profundidadeDoBloco + "): " + proximaLinha);
 
+            // Se encontrou SENAO na profundidade 0, este SE tem SENAO
             if (profundidadeDoBloco == 0 && proximaLinha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                 possuiSenao = true;
+                System.out.println("  -> Encontrou SENAO! Retorna true");
                 break;
             }
 
+            // Se encontrou outro SE na profundidade 0, para a busca (este SE não tem SENAO)
+            if (profundidadeDoBloco == 0 && proximaLinha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString())) {
+                System.out.println("  -> Encontrou outro SE na mesma profundidade! Retorna false");
+                break;
+            }
 
-            if (profundidadeDoBloco == 0 && (proximaLinha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString())
-                    || proximaLinha.endsWith("}"))) {
+            // Se voltou para profundidade 0 e encontrou }, o bloco SE terminou sem SENAO
+            if (profundidadeDoBloco == 0 && proximaLinha.equals("}")) {
+                System.out.println("  -> Encontrou } na profundidade 0 (fim do SE)! Retorna false");
+                break;
             }
 
             j++;
         }
+
+        System.out.println("Resultado: " + possuiSenao);
         return possuiSenao;
     }
 
@@ -554,13 +663,17 @@ public class Parser {
                 }
             }
             if (somaDasConstantes > 0) {
-                registradorParaImediato = "R" + (registradorAtualLivre);
+                // Alocar registrador temporário para a soma das constantes usando LRU
+                String nomeTemporario = "_const_sum_" + somaDasConstantes + "_" + System.nanoTime();
+                AllocationResult result = allocator.allocate(nomeTemporario, somaDasConstantes);
+                result.getInstructions().forEach(codigoAsm::append);
+
+                registradorParaImediato = result.getRegistrador().getNome();
                 codigoAsm.append(Opcode.LDA.getCode())
                         .append(registradorParaImediato)
                         .append(",")
                         .append(somaDasConstantes)
                         .append("\n");
-                registradorAtualLivre++;
 
                 codigoAsm.append(Opcode.SUM.getCode())
                         .append(registradorDaVariavelUsada)
@@ -596,10 +709,15 @@ public class Parser {
 
             // Processar primeiro termo
             if (IntegerUtils.verificaSeEhInteiro(termo1)) {
-                // É um inteiro - carregar em registrador temporário
+                // É um inteiro - carregar em registrador temporário usando LRU
                 int valor1 = Integer.parseInt(termo1);
                 validateInt(valor1);
-                reg1Nome = "R" + registradorAtualLivre;
+
+                String nomeTemporario = "_const_" + valor1 + "_" + System.nanoTime();
+                AllocationResult result = allocator.allocate(nomeTemporario, valor1);
+                result.getInstructions().forEach(codigoAsm::append);
+
+                reg1Nome = result.getRegistrador().getNome();
                 codigoAsm.append(Opcode.LDA.getCode())
                         .append(reg1Nome)
                         .append(",")
@@ -616,10 +734,15 @@ public class Parser {
 
             // Processar segundo termo
             if (IntegerUtils.verificaSeEhInteiro(termo2)) {
-                // É um inteiro - carregar em registrador temporário
+                // É um inteiro - carregar em registrador temporário usando LRU
                 int valor2 = Integer.parseInt(termo2);
                 validateInt(valor2);
-                reg2Nome = "R" + registradorAtualLivre;
+
+                String nomeTemporario = "_const_" + valor2 + "_" + System.nanoTime();
+                AllocationResult result = allocator.allocate(nomeTemporario, valor2);
+                result.getInstructions().forEach(codigoAsm::append);
+
+                reg2Nome = result.getRegistrador().getNome();
                 codigoAsm.append(Opcode.LDA.getCode())
                         .append(reg2Nome)
                         .append(",")

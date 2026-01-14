@@ -55,7 +55,7 @@
       <Pane fx:id="container_regs" layoutX="5.0" layoutY="141.0" prefHeight="377.0" prefWidth="160.0">
          <children>
             <Label layoutX="34.0" layoutY="13.0" text="Registradores" />
-            <GridPane fx:id="gp_regs" gridLinesVisible="true" layoutY="34.0" prefHeight="325.0" prefWidth="153.0">
+            <GridPane fx:id="gp_regs" gridLinesVisible="true" layoutY="33.0" prefHeight="325.0" prefWidth="153.0">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" maxWidth="76.0" minWidth="10.0" prefWidth="74.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="77.0" />
