@@ -1,31 +1,44 @@
 * {
-    -fx-cor-primaria: #eefbee;
+    -fx-cor-primaria: #195319;
     -fx-fonte-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .tela-principal {
     -fx-font-family: -fonte-principal;
     -fx-background-color: -fx-cor-primaria;
+    -text-fill: #b4b4b4;
+
 }
 
 .rodape {
     -fx-background-color: -fx-cor-primaria;
-    -fx-text-fill: white;
+    -fx-text-fill: #b4b4b4;
     -fx-padding: 10px;
     -fx-alignment: center;
 }
 
 .rodape-error {
     -fx-background-color: #c0392b;
-    -fx-text-fill: white;
+    -fx-text-fill: #b4b4b4;
     -fx-padding: 10px;
     -fx-alignment: center;
 }
 
 .label-rodape {
     -fx-font-size: 14px;
-    -fx-text-fill: #000000;
+    -fx-text-fill: #b4b4b4;
+}
 
+/* Cor de texto global para todos os Labels */
+.label {
+    -fx-text-fill: #b4b4b4;
+    -fx-font-weight: bold;
+}
+
+
+.radio-button {
+    -fx-text-fill: #b4b4b4;
+    -fx-font-weight: bold;
 }
 
 /* ========================================= */
@@ -43,7 +56,7 @@
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
     -fx-highlight-fill: #264f78;
-    -fx-highlight-text-fill: #ffffff;
+    -fx-highlight-text-fill: #b4b4b4;
 }
 
 /* SEM borda quando focado */
@@ -126,3 +139,92 @@
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
+
+/* ========================================= */
+/* ================ MENU ================== */
+/* ========================================= */
+
+.menu-bar {
+    -fx-background-color: #195319;
+    -fx-border-color: #858585;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 0;
+}
+
+.menu-bar .label {
+    -fx-text-fill: #b4b4b4;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+/* Menus principais */
+.menu-bar > .container > .menu {
+    -fx-background-color: transparent;
+    -fx-padding: 8px 15px;
+}
+
+.menu-bar > .container > .menu:hover {
+    -fx-background-color: #237523;
+}
+
+.menu-bar > .container > .menu:showing {
+    -fx-background-color: #237523;
+}
+
+/* Items do menu dropdown */
+.context-menu {
+    -fx-background-color: #195319;
+    -fx-background-radius: 4px;
+    -fx-border-color: #0d2e0d;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 5px 0;
+    -fx-effect: dropshadow(gaussian, rgb(195, 195, 195), 10, 0, 0, 3);
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8px 20px 8px 15px;
+}
+
+.menu-item .label {
+    -fx-text-fill: #b4b4b4;
+    -fx-font-size: 13px;
+}
+
+.menu-item:hover {
+    -fx-background-color: #237523;
+}
+
+.menu-item:focused {
+    -fx-background-color: #2d962d;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Separador do menu */
+.separator {
+    -fx-background-color: #0d2e0d;
+    -fx-padding: 1px 0;
+}
+
+/* Ícones e setas do menu */
+.menu-bar .menu .arrow {
+    -fx-background-color: #b4b4b4;
+}
+
+.context-menu .menu .arrow {
+    -fx-background-color: #b4b4b4;
+}
+
+/* Menu desabilitado */
+.menu-item:disabled {
+    -fx-opacity: 0.5;
+}
+
+.menu-item:disabled .label {
+    -fx-text-fill: #6b6b6b;
+}
+
