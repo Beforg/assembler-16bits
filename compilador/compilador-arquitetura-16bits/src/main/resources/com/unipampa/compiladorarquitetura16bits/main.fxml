@@ -28,17 +28,26 @@
       <Button layoutX="15.0" layoutY="42.0" mnemonicParsing="false" onAction="#action" prefHeight="26.0" prefWidth="131.0" text="Compilar" />
       <MenuBar layoutX="7.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
-          <Menu mnemonicParsing="false" text="Menu">
+          <Menu mnemonicParsing="false" text="Arquivo">
             <items>
               <MenuItem mnemonicParsing="false" text="Novo" />
+                  <MenuItem mnemonicParsing="false" text="Abrir" />
                   <MenuItem mnemonicParsing="false" text="Salvar" />
+                  <MenuItem mnemonicParsing="false" text="Sair" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Sobre">
+          <Menu mnemonicParsing="false" text="Código">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="Compilar" />
+              <MenuItem mnemonicParsing="false" text="Compilar e Salvar Assembly" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Sobre">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Sintaxe" />
+                  <MenuItem mnemonicParsing="false" onAction="#exibirCreditos" text="Créditos" />
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
       <Pane layoutX="15.0" layoutY="76.0" prefHeight="75.0" prefWidth="131.0">
@@ -59,7 +68,6 @@
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" maxWidth="76.0" minWidth="10.0" prefWidth="74.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="77.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="80.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -91,15 +99,6 @@
                   <Label fx:id="label_reg6" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <Label fx:id="label_reg7" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <Label text="VAR" GridPane.columnIndex="1" />
-                  <Label text="VALOR" GridPane.columnIndex="2" />
-                  <Label fx:id="label_valorReg0" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label fx:id="label_valorReg1" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label fx:id="label_valorReg2" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Label fx:id="label_valorReg3" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label fx:id="label_valorReg4" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <Label fx:id="label_valorReg5" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                  <Label fx:id="label_valorReg6" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-                  <Label fx:id="label_valorReg7" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                </children>
             </GridPane>
          </children>
@@ -113,7 +112,6 @@
                <columnConstraints>
                   <ColumnConstraints halignment="CENTER" maxWidth="76.0" minWidth="10.0" prefWidth="74.0" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="77.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="80.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -150,14 +148,6 @@
                   <Label fx:id="label_mem5" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Label fx:id="label_mem6" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <Label text="VAR" GridPane.columnIndex="1" />
-                  <Label text="VALOR" GridPane.columnIndex="2" />
-                  <Label fx:id="label_valorMem1" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label fx:id="label_valorMem2" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Label fx:id="label_valorMem3" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label fx:id="label_valorMem4" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <Label fx:id="label_valorMem5" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                  <Label fx:id="label_valorMem6" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-                  <Label fx:id="label_valorMem7" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="8" />
                   <Label text="6" GridPane.rowIndex="7" />
                   <Label text="8" GridPane.rowIndex="9" />
                   <Label text="9" GridPane.rowIndex="10" />
@@ -176,16 +166,7 @@
                   <Label fx:id="label_mem13" text="-" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                   <Label fx:id="label_mem14" text="-" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                   <Label fx:id="label_mem15" text="-" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                  <Label fx:id="label_valorMem8" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-                  <Label fx:id="label_valorMem9" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-                  <Label fx:id="label_valorMem10" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="11" />
-                  <Label fx:id="label_valorMem11" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="12" />
-                  <Label fx:id="label_valorMem12" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="13" />
-                  <Label fx:id="label_valorMem13" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="14" />
-                  <Label fx:id="label_valorMem14" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="15" />
-                  <Label fx:id="label_valorMem15" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="16" />
                   <Label fx:id="label_mem0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="label_valorMem0" text="NULL" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>

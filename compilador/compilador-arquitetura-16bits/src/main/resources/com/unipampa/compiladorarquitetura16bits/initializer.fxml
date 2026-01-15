@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="133.0" prefWidth="245.0" style="-fx-background-color: #2C3E50;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox alignment="CENTER" prefHeight="230.0" prefWidth="448.0" spacing="10.0" style="-fx-background-color: white;">
+        <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+        </padding>
+   
+        <ImageView fitHeight="163.0" fitWidth="412.0" preserveRatio="true">
+            <Image url="@unipampa-h.jpg" />
+        </ImageView>
+   
+        <Label prefHeight="35.0" prefWidth="465.0" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: black;" text="Compilador para Arquitetura 16 bits">
+         <font>
+            <Font size="11.0" />
+         </font>
+      </Label>
+   
+                 <Label style="-fx-font-size: 16px; -fx-text-fill: #BDC3C7;" text="Design by Bruno Forgiarini" />
+    </VBox>
+
+</StackPane>

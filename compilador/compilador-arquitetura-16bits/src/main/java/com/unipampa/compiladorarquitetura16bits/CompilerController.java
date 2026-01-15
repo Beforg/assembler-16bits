@@ -6,12 +6,17 @@ import com.unipampa.compiladorarquitetura16bits.model.Registrador;
 import com.unipampa.compiladorarquitetura16bits.model.Variavel;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelGenerator;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,15 +24,17 @@ import java.util.Map;
 
 public class CompilerController {
     @FXML
-    private Label label_valorReg0,
-            label_valorReg1, label_valorReg2, label_valorReg3, label_valorReg4, label_valorReg5, label_valorReg6,
-            label_valorReg7, label_reg0, label_reg1, label_reg2, label_reg3, label_reg4,
+    private Label  label_reg0, label_reg1, label_reg2, label_reg3, label_reg4,
             label_reg5, label_reg6, label_reg7, label_mem0,label_mem1, label_mem2, label_mem3, label_mem4, label_mem5, label_mem6, label_mem7, label_mem8,
             label_mem9, label_mem10, label_mem11, label_mem12, label_mem13, label_mem14,
-            label_mem15, label_valorMem0,label_valorMem1, label_valorMem2, label_valorMem3, label_valorMem4,
-            label_valorMem5, label_valorMem6, label_valorMem7, label_valorMem8, label_valorMem9,
-            label_valorMem10, label_valorMem11, label_valorMem12, label_valorMem13,
-            label_valorMem14, label_valorMem15;
+            label_mem15;
+//    @FXML
+//    private Label label_valorMem0,label_valorMem1, label_valorMem2, label_valorMem3, label_valorMem4,
+//            label_valorMem5, label_valorMem6, label_valorMem7, label_valorMem8, label_valorMem9,
+//            label_valorMem10, label_valorMem11, label_valorMem12, label_valorMem13,
+//            label_valorMem14, label_valorMem15, label_valorReg0,
+//            label_valorReg1, label_valorReg2, label_valorReg3, label_valorReg4, label_valorReg5, label_valorReg6,
+//            label_valorReg7;
     @FXML
     private TextArea codingArea;
     @FXML
@@ -60,10 +67,10 @@ public class CompilerController {
 
     private void setRegs(Map<Variavel, Registrador> symbolTable) {
         // Array com os labels de valor
-        Label[] labelValores = {
-            label_valorReg0, label_valorReg1, label_valorReg2, label_valorReg3,
-            label_valorReg4, label_valorReg5, label_valorReg6, label_valorReg7
-        };
+//        Label[] labelValores = {
+//            label_valorReg0, label_valorReg1, label_valorReg2, label_valorReg3,
+//            label_valorReg4, label_valorReg5, label_valorReg6, label_valorReg7
+//        };
 
         // Array com os labels de nome de variável
         Label[] labelNomes = {
@@ -72,12 +79,12 @@ public class CompilerController {
         };
 
         // Limpar todos os labels primeiro
-        for (int i = 0; i < 8; i++) {
-            labelValores[i].setText("0");
-            if (labelNomes[i] != null) {
-                labelNomes[i].setText("-");
-            }
-        }
+//        for (int i = 0; i < 8; i++) {
+//            labelValores[i].setText("0");
+//            if (labelNomes[i] != null) {
+//                labelNomes[i].setText("-");
+//            }
+//        }
 
         // Ordenar entries por número do registrador para exibir na ordem R0, R1, R2...
         List<Map.Entry<Variavel, Registrador>> sortedEntries = new ArrayList<>(symbolTable.entrySet());
@@ -102,7 +109,7 @@ public class CompilerController {
 
                 if (regNum >= 0 && regNum < 8) {
                     // Mostrar valor do registrador
-                    labelValores[regNum].setText(String.valueOf(reg.getValor()));
+                   // labelValores[regNum].setText(String.valueOf(reg.getValor()));
 
                     // Mostrar nome da variável
                     if (labelNomes[regNum] != null) {
@@ -131,21 +138,21 @@ public class CompilerController {
             label_mem12, label_mem13, label_mem14, label_mem15
         };
 
-        Label[] labelValoresMemoria = {
-            label_valorMem0, label_valorMem1, label_valorMem2, label_valorMem3,
-            label_valorMem4, label_valorMem5, label_valorMem6, label_valorMem7,
-            label_valorMem8, label_valorMem9, label_valorMem10, label_valorMem11,
-            label_valorMem12, label_valorMem13, label_valorMem14, label_valorMem15
-        };
+//        Label[] labelValoresMemoria = {
+//            label_valorMem0, label_valorMem1, label_valorMem2, label_valorMem3,
+//            label_valorMem4, label_valorMem5, label_valorMem6, label_valorMem7,
+//            label_valorMem8, label_valorMem9, label_valorMem10, label_valorMem11,
+//            label_valorMem12, label_valorMem13, label_valorMem14, label_valorMem15
+//        };
 
         // Limpar todos os labels primeiro
         for (int i = 0; i < 16; i++) {
             if (labelNomesMemoria[i] != null) {
                 labelNomesMemoria[i].setText("-");
             }
-            if (labelValoresMemoria[i] != null) {
-                labelValoresMemoria[i].setText("0");
-            }
+//            if (labelValoresMemoria[i] != null) {
+//                labelValoresMemoria[i].setText("0");
+//            }
         }
 
         // Obter mapa de memória do MemoryManager
@@ -167,9 +174,9 @@ public class CompilerController {
                 }
 
                 // Mostrar valor
-                if (labelValoresMemoria[address] != null) {
-                    labelValoresMemoria[address].setText(String.valueOf(slot.getValue()));
-                }
+//                if (labelValoresMemoria[address] != null) {
+//                    labelValoresMemoria[address].setText(String.valueOf(slot.getValue()));
+//                }
             }
         }
     }
@@ -184,5 +191,30 @@ public class CompilerController {
     private void showMemValues () {
         container_regs.setVisible(false);
         container_mem.setVisible(true);
+    }
+
+    @FXML
+    private void exibirCreditos() {
+        try {
+            // Carregar o FXML da tela de créditos
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("creditos.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            // Criar nova janela (Stage)
+            Stage creditosStage = new Stage();
+            creditosStage.setTitle("Créditos");
+            creditosStage.setScene(scene);
+            creditosStage.setResizable(false);
+
+            // Configurar como modal (bloqueia interação com janela principal)
+            creditosStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Exibir janela e aguardar até ser fechada
+            creditosStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir tela de créditos: " + e.getMessage());
+        }
     }
 }
