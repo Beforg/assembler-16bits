@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="651.0" prefWidth="728.0" styleClass="tela-principal" stylesheets="@main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unipampa.compiladorarquitetura16bits.CompilerController">
    <children>
@@ -25,7 +26,10 @@
          </image>
       </ImageView>
       <TextArea fx:id="codingArea" layoutX="164.0" layoutY="26.0" prefHeight="586.0" prefWidth="564.0" promptText="Digite seu código aqui..." styleClass="code-editor" AnchorPane.bottomAnchor="38.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
-      <Button layoutX="15.0" layoutY="42.0" mnemonicParsing="false" onAction="#action" prefHeight="26.0" prefWidth="131.0" text="Compilar" />
+      <Button layoutX="15.0" layoutY="42.0" mnemonicParsing="false" onAction="#action" prefHeight="26.0" prefWidth="131.0" style="-fx-background-color: #7FB069;" text="Compilar" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
       <MenuBar layoutX="7.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="Arquivo">

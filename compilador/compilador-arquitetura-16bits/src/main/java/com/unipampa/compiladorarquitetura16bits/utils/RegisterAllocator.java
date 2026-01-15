@@ -109,7 +109,7 @@ public class RegisterAllocator {
             locationTracker.setInRegister(nomeVariavel, reg);
             updateLastUsedTime(reg);
 
-            System.out.println("[RegisterAllocator] RELOAD: " + nomeVariavel + " da memória para " + reg.getNome());
+           // System.out.println("[RegisterAllocator] RELOAD: " + nomeVariavel + " da memória para " + reg.getNome());
 
             return new AllocationResult(reg, instructions);
         }
@@ -223,8 +223,8 @@ public class RegisterAllocator {
         String spillInstruction = String.format("STA,%s,%d\n", lruReg.getNome(), memAddr);
 
         // Log para debug
-        System.out.println(String.format("[RegisterAllocator] SPILL: %s (valor=%d) do %s para memória[%d]",
-            lruVar.getNome(), lruReg.getValor(), lruReg.getNome(), memAddr));
+       // System.out.println(String.format("[RegisterAllocator] SPILL: %s (valor=%d) do %s para memória[%d]",
+        //    lruVar.getNome(), lruReg.getValor(), lruReg.getNome(), memAddr));
 
         // Extrair número do registrador
         int regNumber = Integer.parseInt(lruReg.getNome().replace("R", ""));
@@ -274,8 +274,8 @@ public class RegisterAllocator {
         spillInstructions.add(spillInstruction);
 
         // Log para debug
-        System.out.println(String.format("[RegisterAllocator] SPILL: %s (valor=%d) do %s para memória[%d]",
-            lruVar.getNome(), lruReg.getValor(), lruReg.getNome(), memAddr));
+        //System.out.println(String.format("[RegisterAllocator] SPILL: %s (valor=%d) do %s para memória[%d]",
+           // lruVar.getNome(), lruReg.getValor(), lruReg.getNome(), memAddr));
 
         // Extrair número do registrador
         int regNumber = Integer.parseInt(lruReg.getNome().replace("R", ""));

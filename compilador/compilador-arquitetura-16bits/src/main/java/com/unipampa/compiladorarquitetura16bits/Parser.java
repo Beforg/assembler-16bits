@@ -117,27 +117,27 @@ public class Parser {
             // Tratar chaves e senao
             // Caso 1: "} senao {" na mesma linha
             if (linha.contains("}") && linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
-                System.out.println("\n=== DEBUG: Encontrado } senao { na mesma linha ===");
+//                System.out.println("\n=== DEBUG: Encontrado } senao { na mesma linha ===");
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
-                    System.out.println("top.hasElse: " + top.hasElse);
-                    System.out.println("top.elseLabel: " + top.elseLabel);
-                    System.out.println("top.endLabel: " + top.endLabel);
+//                    System.out.println("top.hasElse: " + top.hasElse);
+//                    System.out.println("top.elseLabel: " + top.elseLabel);
+//                    System.out.println("top.endLabel: " + top.endLabel);
 
                     if (top.hasElse) {
                         // Adicionar JMP para fim e label SENAO_INICIO
                         codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
                         codigoAsm.append(top.elseLabel).append(":\n");
-
-                        System.out.println("Gerou: JMP," + top.endLabel);
-                        System.out.println("Gerou: " + top.elseLabel + ":");
+//
+//                        System.out.println("Gerou: JMP," + top.endLabel);
+//                        System.out.println("Gerou: " + top.elseLabel + ":");
 
                         // Processar corpo do SENAO
                         i = montarInstrucaoSenao(i, linhas, codigoAsm, top.endLabel);
 
                         // Adicionar label de fim
                         codigoAsm.append(top.endLabel).append(":\n");
-                        System.out.println("Gerou: " + top.endLabel + ":");
+//                        System.out.println("Gerou: " + top.endLabel + ":");
 
                         // Remover da stack
                         ifLabelStack.pop();
@@ -148,33 +148,33 @@ public class Parser {
 
             // Caso 2: Apenas "}" (fechamento de bloco)
             if (linha.equals("}") || linha.equals("};")) {
-                System.out.println("\n=== DEBUG: Encontrado } sozinho ===");
+//                System.out.println("\n=== DEBUG: Encontrado } sozinho ===");
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
-                    System.out.println("top.hasElse: " + top.hasElse);
-                    System.out.println("top.endLineIndex: " + top.endLineIndex + " vs i=" + i);
+//                    System.out.println("top.hasElse: " + top.hasElse);
+//                    System.out.println("top.endLineIndex: " + top.endLineIndex + " vs i=" + i);
 
                     // Verificar se a próxima linha contém SENAO
                     boolean proximaLinhaESenao = false;
                     if (i + 1 < linhas.length) {
                         String proximaLinha = linhas[i + 1].trim();
-                        System.out.println("Próxima linha [" + (i+1) + "]: '" + proximaLinha + "'");
+//                        System.out.println("Próxima linha [" + (i+1) + "]: '" + proximaLinha + "'");
                         if (proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                             proximaLinhaESenao = true;
                         }
-                        System.out.println("startsWith 'senao'? " + proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString()));
+//                        System.out.println("startsWith 'senao'? " + proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString()));
                     }
-                    System.out.println("proximaLinhaESenao: " + proximaLinhaESenao);
+//                    System.out.println("proximaLinhaESenao: " + proximaLinhaESenao);
 
                     // SE com SENAO (senao na próxima linha)
                     if (top.hasElse && proximaLinhaESenao) {
-                        System.out.println("Processando SE com SENAO (senao na próxima linha)");
+//                        System.out.println("Processando SE com SENAO (senao na próxima linha)");
                         // Adicionar JMP para fim e label SENAO_INICIO
                         codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
                         codigoAsm.append(top.elseLabel).append(":\n");
 
-                        System.out.println("Gerou: JMP," + top.endLabel);
-                        System.out.println("Gerou: " + top.elseLabel + ":");
+//                        System.out.println("Gerou: JMP," + top.endLabel);
+//                        System.out.println("Gerou: " + top.elseLabel + ":");
 
                         // Pular para a próxima linha (que é o SENAO)
                         i++;
@@ -325,10 +325,10 @@ public class Parser {
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
 
-            System.out.println("\n=== DEBUG: SE COM SENAO ===");
-            System.out.println("labelThen: " + labelThen);
-            System.out.println("labelElse: " + labelElse);
-            System.out.println("labelEnd: " + labelEnd);
+//            System.out.println("\n=== DEBUG: SE COM SENAO ===");
+//            System.out.println("labelThen: " + labelThen);
+//            System.out.println("labelElse: " + labelElse);
+//            System.out.println("labelEnd: " + labelEnd);
 
             ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
 
@@ -339,16 +339,16 @@ public class Parser {
             montarInstrucaoJump(codigoAsm, labelElse);
             codigoAsm.append(labelThen).append(":\n");
 
-            System.out.println("Gerou: BEQ para " + labelThen);
-            System.out.println("Gerou: JMP para " + labelElse);
+//            System.out.println("Gerou: BEQ para " + labelThen);
+//            System.out.println("Gerou: JMP para " + labelElse);
 
         } else {
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
 
-            System.out.println("\n=== DEBUG: SE SEM SENAO ===");
-            System.out.println("labelThen: " + labelThen);
-            System.out.println("labelEnd: " + labelEnd);
+//            System.out.println("\n=== DEBUG: SE SEM SENAO ===");
+//            System.out.println("labelThen: " + labelThen);
+//            System.out.println("labelEnd: " + labelEnd);
 
             // find the closing brace line index for this then-block so we can emit the end label later
             int endLineIndex = buscarFechamentoDeChaves(linhas, i);
@@ -363,8 +363,8 @@ public class Parser {
             montarInstrucaoJump(codigoAsm, labelEnd);
             codigoAsm.append(labelThen).append(":\n");
 
-            System.out.println("Gerou: BEQ para " + labelThen);
-            System.out.println("Gerou: JMP para " + labelEnd);
+//            System.out.println("Gerou: BEQ para " + labelThen);
+//            System.out.println("Gerou: JMP para " + labelEnd);
         }
     }
 
@@ -517,8 +517,8 @@ public class Parser {
             profundidadeDoBloco = 1;
         }
 
-        System.out.println("\n=== DEBUG sePosuiSenao() ===");
-        System.out.println("Verificando SE na linha " + i + ": " + linha);
+//        System.out.println("\n=== DEBUG sePosuiSenao() ===");
+//        System.out.println("Verificando SE na linha " + i + ": " + linha);
 
         while (j < linhas.length) {
             String proximaLinha = linhas[j].trim();
@@ -536,31 +536,31 @@ public class Parser {
                 profundidadeDoBloco = Math.max(0, profundidadeDoBloco - 1);
             }
 
-            System.out.println("  Linha " + j + " (prof=" + profundidadeDoBloco + "): " + proximaLinha);
+//            System.out.println("  Linha " + j + " (prof=" + profundidadeDoBloco + "): " + proximaLinha);
 
             // Se encontrou SENAO na profundidade 0, este SE tem SENAO
             if (profundidadeDoBloco == 0 && proximaLinha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                 possuiSenao = true;
-                System.out.println("  -> Encontrou SENAO! Retorna true");
+//                System.out.println("  -> Encontrou SENAO! Retorna true");
                 break;
             }
 
             // Se encontrou outro SE na profundidade 0, para a busca (este SE não tem SENAO)
             if (profundidadeDoBloco == 0 && proximaLinha.startsWith(CompiladorSintaxe.SE.getSintaxeEmString())) {
-                System.out.println("  -> Encontrou outro SE na mesma profundidade! Retorna false");
+//                System.out.println("  -> Encontrou outro SE na mesma profundidade! Retorna false");
                 break;
             }
 
             // Se voltou para profundidade 0 e encontrou }, o bloco SE terminou sem SENAO
             if (profundidadeDoBloco == 0 && proximaLinha.equals("}")) {
-                System.out.println("  -> Encontrou } na profundidade 0 (fim do SE)! Retorna false");
+//                System.out.println("  -> Encontrou } na profundidade 0 (fim do SE)! Retorna false");
                 break;
             }
 
             j++;
         }
 
-        System.out.println("Resultado: " + possuiSenao);
+//        System.out.println("Resultado: " + possuiSenao);
         return possuiSenao;
     }
 

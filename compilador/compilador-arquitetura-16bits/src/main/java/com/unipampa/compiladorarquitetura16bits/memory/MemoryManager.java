@@ -147,8 +147,8 @@ public class MemoryManager {
         MemorySlot freedSlot = varToSlot.remove(lruVar);
         lastAccessTime.remove(lruVar);
 
-        System.out.println("[MemoryManager] LRU: Liberando slot " + freedSlot.getAddress() +
-                          " (variável: " + lruVar + ")");
+//        System.out.println("[MemoryManager] LRU: Liberando slot " + freedSlot.getAddress() +
+//                          " (variável: " + lruVar + ")");
 
         return freedSlot.getAddress();
     }
