@@ -42,6 +42,7 @@ public class CompilerController {
 
     private final Parser parser;
     private final Map<Variavel, Registrador> symbolTable = new HashMap<>();
+    private String assemblyCodeGenerated = ""; // Armazena o último assembly gerado
 
 
     public CompilerController () {
@@ -55,6 +56,10 @@ public class CompilerController {
         parser.reset();
 
         String code = parser.parse(codingArea.getText());
+
+        // Substituir labels e armazenar o assembly gerado
+        assemblyCodeGenerated = LabelGenerator.substituirLabel(code);
+
         setRegs(symbolTable);
         setMemory(parser.getMemoryManager());
 
@@ -62,7 +67,7 @@ public class CompilerController {
         System.out.println("\n=== ESTATÍSTICAS ===");
         System.out.println(parser.getAllocator().getStatistics());
         System.out.println("\n=== ASSEMBLY GERADO ===");
-        System.out.println(LabelGenerator.substituirLabel(code));
+        System.out.println(assemblyCodeGenerated);
     }
 
     private void setRegs(Map<Variavel, Registrador> symbolTable) {
@@ -215,6 +220,41 @@ public class CompilerController {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Erro ao abrir tela de créditos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void exibirAssembly() {
+        try {
+            // Verificar se há assembly gerado
+            if (assemblyCodeGenerated == null || assemblyCodeGenerated.isEmpty()) {
+                System.out.println("Nenhum assembly gerado ainda. Compile o código primeiro.");
+                return;
+            }
+
+            // Carregar o FXML do terminal
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("assembly-terminal.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            // Obter o controller e passar o código assembly
+            AssemblyTerminalController controller = loader.getController();
+            controller.setAssemblyCode(assemblyCodeGenerated);
+
+            // Criar nova janela (Stage)
+            Stage terminalStage = new Stage();
+            terminalStage.setTitle("Assembly - Terminal");
+            terminalStage.setScene(scene);
+            terminalStage.setResizable(true);
+
+            // Configurar como modal (bloqueia interação com janela principal)
+            terminalStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Exibir janela
+            terminalStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir terminal de assembly: " + e.getMessage());
         }
     }
 }

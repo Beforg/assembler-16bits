@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21.0.6"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.unipampa.compiladorarquitetura16bits.AssemblyTerminalController"
+      spacing="15"
+      style="-fx-background-color: #1E1E1E;"
+      prefHeight="600.0"
+      prefWidth="700.0">
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+
+    <!-- Cabeçalho -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Assembly Gerado"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;"/>
+    </HBox>
+
+    <!-- Área de texto do terminal -->
+    <TextArea fx:id="terminalArea"
+              editable="false"
+              wrapText="false"
+              style="-fx-control-inner-background: #0D0D0D;
+                     -fx-text-fill: #00FF00;
+                     -fx-font-family: 'Courier New', monospace;
+                     -fx-font-size: 13px;
+                     -fx-background-color: #0D0D0D;
+                     -fx-border-color: #7FB069;
+                     -fx-border-width: 2px;"
+              VBox.vgrow="ALWAYS">
+    </TextArea>
+
+    <!-- Rodapé com botões -->
+    <HBox alignment="CENTER" spacing="15">
+        <Button text="Copiar"
+                onAction="#copiarAssembly"
+                style="-fx-background-color: #7FB069;
+                       -fx-text-fill: white;
+                       -fx-font-size: 13px;
+                       -fx-font-weight: bold;
+                       -fx-padding: 8 25 8 25;
+                       -fx-cursor: hand;"
+                onMouseEntered="#onCopiarMouseEntered"
+                onMouseExited="#onCopiarMouseExited"/>
+
+        <Button text="Fechar"
+                onAction="#fecharTerminal"
+                style="-fx-background-color: #555555;
+                       -fx-text-fill: white;
+                       -fx-font-size: 13px;
+                       -fx-font-weight: bold;
+                       -fx-padding: 8 25 8 25;
+                       -fx-cursor: hand;"
+                onMouseEntered="#onFecharMouseEntered"
+                onMouseExited="#onFecharMouseExited"/>
+    </HBox>
+
+</VBox>
+

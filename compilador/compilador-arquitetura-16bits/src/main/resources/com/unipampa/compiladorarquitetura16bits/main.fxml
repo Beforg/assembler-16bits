@@ -40,6 +40,7 @@
             <items>
                   <MenuItem mnemonicParsing="false" text="Compilar" />
               <MenuItem mnemonicParsing="false" text="Compilar e Salvar Assembly" />
+                  <MenuItem mnemonicParsing="false" onAction="#exibirAssembly" text="Exibir Assembly" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Sobre">
