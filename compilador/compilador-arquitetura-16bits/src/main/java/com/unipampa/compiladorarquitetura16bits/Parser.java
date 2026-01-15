@@ -12,8 +12,7 @@ import com.unipampa.compiladorarquitetura16bits.utils.IntegerUtils;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelGenerator;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelsCompilador;
 import com.unipampa.compiladorarquitetura16bits.utils.RegisterAllocator;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
+import com.unipampa.compiladorarquitetura16bits.utils.exceptions.CompilationException;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -485,7 +484,10 @@ public class Parser {
             Registrador registradorDaVariavelUsada = getOrLoadRegistrador(variavelUsada, codigoAsm);
 
             if (registradorDaVariavelUsada == null) {
-                throw new IllegalArgumentException("Variável " + variavelUsada + " não declarada.");
+                throw new CompilationException(
+                    "Variável '" + variavelUsada + "' não foi declarada.",
+                    CompilationException.ErrorType.SEMANTIC_ERROR
+                );
             }
             String nomeRegistradorUsado = registradorDaVariavelUsada.getNome();
             if (expressao.contains(CompiladorSintaxe.SOMA.getSintaxeEmString())) {
@@ -572,7 +574,10 @@ public class Parser {
         Registrador reg2Obj = getOrLoadRegistrador(ops[1].trim(), codigoAsm);
 
         if (reg1Obj == null || reg2Obj == null) {
-            throw new IllegalArgumentException("Variável não declarada na expressão.");
+            throw new CompilationException(
+                "Variável não declarada na expressão de multiplicação.",
+                CompilationException.ErrorType.SEMANTIC_ERROR
+            );
         }
 
         String reg1 = reg1Obj.getNome();
@@ -595,7 +600,10 @@ public class Parser {
         Registrador reg2Obj = getOrLoadRegistrador(ops[1].trim(), codigoAsm);
 
         if (reg1Obj == null || reg2Obj == null) {
-            throw new IllegalArgumentException("Variável não declarada na expressão.");
+            throw new CompilationException(
+                "Variável não declarada na expressão de subtração.",
+                CompilationException.ErrorType.SEMANTIC_ERROR
+            );
         }
 
         String reg1 = reg1Obj.getNome();
@@ -627,7 +635,10 @@ public class Parser {
                     somaDasConstantes += valorDoInteiro;
 
                     if (somaDasConstantes > 15) {
-                        throw new IllegalArgumentException("Soma das constantes excede o valor máximo permitido (15).");
+                        throw new CompilationException(
+                            "Soma das constantes (" + somaDasConstantes + ") excede o valor máximo permitido (15).",
+                            CompilationException.ErrorType.VALUE_OUT_OF_RANGE
+                        );
                     }
 
                 } else {
@@ -635,7 +646,10 @@ public class Parser {
                         // Usar getOrLoadRegistrador para suportar variáveis na memória
                         Registrador reg1Obj = getOrLoadRegistrador(valorOuVariavelDaExpressao.trim(), codigoAsm);
                         if (reg1Obj == null) {
-                            throw new IllegalArgumentException("Variável " + valorOuVariavelDaExpressao.trim() + " não declarada.");
+                            throw new CompilationException(
+                                "Variável '" + valorOuVariavelDaExpressao.trim() + "' não foi declarada.",
+                                CompilationException.ErrorType.SEMANTIC_ERROR
+                            );
                         }
                         registradorOperando1 = reg1Obj.getNome();
                         nomeDaVariavel = valorOuVariavelDaExpressao.trim();
@@ -647,7 +661,10 @@ public class Parser {
                         // Usar getOrLoadRegistrador para suportar variáveis na memória
                         Registrador reg2Obj = getOrLoadRegistrador(valorOuVariavelDaExpressao.trim(), codigoAsm);
                         if (reg2Obj == null) {
-                            throw new IllegalArgumentException("Variável " + valorOuVariavelDaExpressao.trim() + " não declarada.");
+                            throw new CompilationException(
+                                "Variável '" + valorOuVariavelDaExpressao.trim() + "' não foi declarada.",
+                                CompilationException.ErrorType.SEMANTIC_ERROR
+                            );
                         }
                         registradorOperando2 = reg2Obj.getNome();
                         codigoAsm.append(Opcode.SUM.getCode())
@@ -689,7 +706,10 @@ public class Parser {
                 // Usar getOrLoadRegistrador para suportar variáveis na memória
                 Registrador regRestanteObj = getOrLoadRegistrador(nomeDaVariavel, codigoAsm);
                 if (regRestanteObj == null) {
-                    throw new IllegalArgumentException("Variável " + nomeDaVariavel + " não declarada.");
+                    throw new CompilationException(
+                        "Variável '" + nomeDaVariavel + "' não foi declarada.",
+                        CompilationException.ErrorType.SEMANTIC_ERROR
+                    );
                 }
                 String registradorRestante = regRestanteObj.getNome();
                 codigoAsm.append(Opcode.SUM.getCode())
@@ -729,7 +749,10 @@ public class Parser {
                 // É uma variável - buscar registrador ou carregar da memória
                 Registrador reg1 = getOrLoadRegistrador(termo1, codigoAsm);
                 if (reg1 == null) {
-                    throw new IllegalArgumentException("Variável '" + termo1 + "' não declarada na expressão.");
+                    throw new CompilationException(
+                        "Variável '" + termo1 + "' não foi declarada na expressão.",
+                        CompilationException.ErrorType.SEMANTIC_ERROR
+                    );
                 }
                 reg1Nome = reg1.getNome();
             }
@@ -754,7 +777,10 @@ public class Parser {
                 // É uma variável - buscar registrador ou carregar da memória
                 Registrador reg2 = getOrLoadRegistrador(termo2, codigoAsm);
                 if (reg2 == null) {
-                    throw new IllegalArgumentException("Variável '" + termo2 + "' não declarada na expressão.");
+                    throw new CompilationException(
+                        "Variável '" + termo2 + "' não foi declarada na expressão.",
+                        CompilationException.ErrorType.SEMANTIC_ERROR
+                    );
                 }
                 reg2Nome = reg2.getNome();
             }
@@ -820,7 +846,10 @@ public class Parser {
     private int extrairValorInteiro(String[] partes) {
 
         if (verificarSeContemOperacaoNaAtribuicao(partes[1])) {
-            throw new IllegalArgumentException("Inicialização com expressão não suportada ainda.");
+            throw new CompilationException(
+                "Inicialização com expressão não suportada ainda.",
+                CompilationException.ErrorType.UNSUPPORTED_OPERATION
+            );
         } else {
             int valor = Integer.parseInt(partes[1].trim());
             validateInt(valor);

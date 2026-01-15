@@ -5,6 +5,7 @@ import com.unipampa.compiladorarquitetura16bits.memory.MemorySlot;
 import com.unipampa.compiladorarquitetura16bits.model.Registrador;
 import com.unipampa.compiladorarquitetura16bits.model.Variavel;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelGenerator;
+import com.unipampa.compiladorarquitetura16bits.utils.exceptions.CompilationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -53,24 +54,47 @@ public class CompilerController {
 
     @FXML
     private void action() {
-        // Resetar estados antes de cada compilação
-        symbolTable.clear();
-        parser.reset();
+        try {
+            // Resetar estados antes de cada compilação
+            symbolTable.clear();
+            parser.reset();
 
-        String code = parser.parse(codingArea.getText());
+            String code = parser.parse(codingArea.getText());
 
-        // Substituir labels e armazenar o assembly gerado
-        assemblyCodeGenerated = LabelGenerator.substituirLabel(code);
+            // Substituir labels e armazenar o assembly gerado
+            assemblyCodeGenerated = LabelGenerator.substituirLabel(code);
 
-        setRegs(symbolTable);
-        setMemory(parser.getMemoryManager());
+            setRegs(symbolTable);
+            setMemory(parser.getMemoryManager());
 
-        // Mostrar estatísticas no console
-        System.out.println("\n=== ESTATÍSTICAS ===");
-        System.out.println(parser.getAllocator().getStatistics());
-        System.out.println("\n=== ASSEMBLY GERADO ===");
-        System.out.println(assemblyCodeGenerated);
-        setAviso("Compilação concluída com sucesso!", "lightgreen", "black");
+            // Mostrar estatísticas no console
+//            System.out.println("\n=== ESTATÍSTICAS ===");
+//            System.out.println(parser.getAllocator().getStatistics());
+//            System.out.println("\n=== ASSEMBLY GERADO ===");
+//            System.out.println(assemblyCodeGenerated);
+
+            // Exibir mensagem de sucesso
+            setAviso("Compilação concluída com sucesso!", "#7FB069", "white");
+
+        } catch (CompilationException e) {
+            // Capturar erros de compilação e exibir no componente
+            setAviso(e.getFormattedMessage(), "#E74C3C", "white");
+            System.err.println("Erro de compilação: " + e.getMessage());
+
+        } catch (Exception e) {
+            // Capturar outros erros inesperados
+            setAviso("Erro inesperado: " + e.getMessage(), "#C0392B", "white");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Atualiza o componente de avisos com mensagem, cor de fundo e cor do texto
+     */
+    private void setAviso(String aviso, String corPane, String corLabel) {
+        label_avisos.setText(aviso);
+        label_avisos.setStyle("-fx-text-fill: " + corLabel);
+        pane_avisos.setStyle("-fx-background-color: " + corPane);
     }
 
     private void setRegs(Map<Variavel, Registrador> symbolTable) {
@@ -261,11 +285,5 @@ public class CompilerController {
             e.printStackTrace();
             System.err.println("Erro ao abrir terminal de assembly: " + e.getMessage());
         }
-    }
-
-    private void setAviso(String aviso, String corPane, String corLabel) {
-        label_avisos.setText(aviso);
-        label_avisos.setStyle("-fx-text-fill: " + corLabel);
-        pane_avisos.setStyle("-fx-background-color: " + corPane);
     }
 }
