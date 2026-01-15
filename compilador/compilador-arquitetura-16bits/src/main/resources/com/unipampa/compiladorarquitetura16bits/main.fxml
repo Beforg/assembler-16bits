@@ -172,9 +172,9 @@
             </GridPane>
          </children>
       </Pane>
-      <Pane layoutY="611.0" prefHeight="40.0" prefWidth="728.0" styleClass="rodape" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <Pane fx:id="pane_avisos" layoutY="611.0" prefHeight="40.0" prefWidth="728.0" styleClass="rodape" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="TOP" layoutX="27.0" layoutY="11.0" prefHeight="18.0" prefWidth="687.0" styleClass="label-rodape" text="Compilador para Arquitetura de 16bits" />
+            <Label fx:id="label_avisos" alignment="CENTER" contentDisplay="TOP" layoutX="27.0" layoutY="11.0" prefHeight="18.0" prefWidth="687.0" styleClass="label-rodape" text="Compilador para Arquitetura de 16bits" />
          </children>
       </Pane>
    </children>

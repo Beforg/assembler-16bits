@@ -27,7 +27,9 @@ public class CompilerController {
     private Label  label_reg0, label_reg1, label_reg2, label_reg3, label_reg4,
             label_reg5, label_reg6, label_reg7, label_mem0,label_mem1, label_mem2, label_mem3, label_mem4, label_mem5, label_mem6, label_mem7, label_mem8,
             label_mem9, label_mem10, label_mem11, label_mem12, label_mem13, label_mem14,
-            label_mem15;
+            label_mem15, label_avisos;
+    @FXML
+    private Pane pane_avisos;
 //    @FXML
 //    private Label label_valorMem0,label_valorMem1, label_valorMem2, label_valorMem3, label_valorMem4,
 //            label_valorMem5, label_valorMem6, label_valorMem7, label_valorMem8, label_valorMem9,
@@ -68,6 +70,7 @@ public class CompilerController {
         System.out.println(parser.getAllocator().getStatistics());
         System.out.println("\n=== ASSEMBLY GERADO ===");
         System.out.println(assemblyCodeGenerated);
+        setAviso("Compilação concluída com sucesso!", "lightgreen", "black");
     }
 
     private void setRegs(Map<Variavel, Registrador> symbolTable) {
@@ -229,12 +232,14 @@ public class CompilerController {
             // Verificar se há assembly gerado
             if (assemblyCodeGenerated == null || assemblyCodeGenerated.isEmpty()) {
                 System.out.println("Nenhum assembly gerado ainda. Compile o código primeiro.");
+                setAviso("Nenhum assembly gerado ainda. Compile o código primeiro.", "yellow", "black");
                 return;
             }
 
             // Carregar o FXML do terminal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("assembly-terminal.fxml"));
             Scene scene = new Scene(loader.load());
+
 
             // Obter o controller e passar o código assembly
             AssemblyTerminalController controller = loader.getController();
@@ -256,5 +261,11 @@ public class CompilerController {
             e.printStackTrace();
             System.err.println("Erro ao abrir terminal de assembly: " + e.getMessage());
         }
+    }
+
+    private void setAviso(String aviso, String corPane, String corLabel) {
+        label_avisos.setText(aviso);
+        label_avisos.setStyle("-fx-text-fill: " + corLabel);
+        pane_avisos.setStyle("-fx-background-color: " + corPane);
     }
 }

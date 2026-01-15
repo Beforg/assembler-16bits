@@ -12,6 +12,8 @@ import com.unipampa.compiladorarquitetura16bits.utils.IntegerUtils;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelGenerator;
 import com.unipampa.compiladorarquitetura16bits.utils.LabelsCompilador;
 import com.unipampa.compiladorarquitetura16bits.utils.RegisterAllocator;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

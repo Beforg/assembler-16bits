@@ -4,65 +4,29 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21.0.6"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.unipampa.compiladorarquitetura16bits.AssemblyTerminalController"
-      spacing="15"
-      style="-fx-background-color: #1E1E1E;"
-      prefHeight="600.0"
-      prefWidth="700.0">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" spacing="15" style="-fx-background-color: #1E1E1E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unipampa.compiladorarquitetura16bits.AssemblyTerminalController">
 
     <padding>
-        <Insets top="20" bottom="20" left="20" right="20"/>
+        <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
 
     <!-- Cabeçalho -->
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="Assembly Gerado"
-               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;"/>
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;" text="Assembly Gerado" />
     </HBox>
 
     <!-- Área de texto do terminal -->
-    <TextArea fx:id="terminalArea"
-              editable="false"
-              wrapText="false"
-              style="-fx-control-inner-background: #0D0D0D;
-                     -fx-text-fill: #00FF00;
-                     -fx-font-family: 'Courier New', monospace;
-                     -fx-font-size: 13px;
-                     -fx-background-color: #0D0D0D;
-                     -fx-border-color: #7FB069;
-                     -fx-border-width: 2px;"
-              VBox.vgrow="ALWAYS">
+    <TextArea fx:id="terminalArea" editable="false" style="-fx-control-inner-background: #0D0D0D;                      -fx-text-fill: #00FF00;                      -fx-font-family: 'Courier New', monospace;                      -fx-font-size: 13px;                      -fx-background-color: #0D0D0D;                      -fx-border-color: #7FB069;                      -fx-border-width: 2px;" wrapText="false" VBox.vgrow="ALWAYS">
     </TextArea>
 
     <!-- Rodapé com botões -->
     <HBox alignment="CENTER" spacing="15">
-        <Button text="Copiar"
-                onAction="#copiarAssembly"
-                style="-fx-background-color: #7FB069;
-                       -fx-text-fill: white;
-                       -fx-font-size: 13px;
-                       -fx-font-weight: bold;
-                       -fx-padding: 8 25 8 25;
-                       -fx-cursor: hand;"
-                onMouseEntered="#onCopiarMouseEntered"
-                onMouseExited="#onCopiarMouseExited"/>
+        <Button onAction="#copiarAssembly" onMouseEntered="#onCopiarMouseEntered" onMouseExited="#onCopiarMouseExited" style="-fx-background-color: #7FB069;                        -fx-text-fill: white;                        -fx-font-size: 13px;                        -fx-font-weight: bold;                        -fx-padding: 8 25 8 25;                        -fx-cursor: hand;" text="Copiar" />
 
-        <Button text="Fechar"
-                onAction="#fecharTerminal"
-                style="-fx-background-color: #555555;
-                       -fx-text-fill: white;
-                       -fx-font-size: 13px;
-                       -fx-font-weight: bold;
-                       -fx-padding: 8 25 8 25;
-                       -fx-cursor: hand;"
-                onMouseEntered="#onFecharMouseEntered"
-                onMouseExited="#onFecharMouseExited"/>
+        <Button onAction="#fecharTerminal" onMouseEntered="#onFecharMouseEntered" onMouseExited="#onFecharMouseExited" style="-fx-background-color: #555555;                        -fx-text-fill: white;                        -fx-font-size: 13px;                        -fx-font-weight: bold;                        -fx-padding: 8 25 8 25;                        -fx-cursor: hand;" text="Fechar" />
     </HBox>
 
 </VBox>
-
