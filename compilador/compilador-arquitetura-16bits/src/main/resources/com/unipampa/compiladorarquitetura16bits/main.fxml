@@ -34,22 +34,20 @@
         <menus>
           <Menu mnemonicParsing="false" text="Arquivo">
             <items>
-              <MenuItem mnemonicParsing="false" text="Novo" />
-                  <MenuItem mnemonicParsing="false" text="Abrir" />
-                  <MenuItem mnemonicParsing="false" text="Salvar" />
-                  <MenuItem mnemonicParsing="false" text="Sair" />
+                  <MenuItem mnemonicParsing="false" onAction="#salvarCodigo" text="Salvar" />
+                  <MenuItem mnemonicParsing="false" onAction="#encerrarCompilador" text="Sair" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Código">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Compilar" />
-              <MenuItem mnemonicParsing="false" text="Compilar e Salvar Assembly" />
+                  <MenuItem mnemonicParsing="false" onAction="#action" text="Compilar" />
+              <MenuItem mnemonicParsing="false" onAction="#compilarEsalvarAsm" text="Compilar e Salvar Assembly" />
                   <MenuItem mnemonicParsing="false" onAction="#exibirAssembly" text="Exibir Assembly" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Sobre">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Sintaxe" />
+                  <MenuItem mnemonicParsing="false" onAction="#exibirSintaxe" text="Sintaxe" />
                   <MenuItem mnemonicParsing="false" onAction="#exibirCreditos" text="Créditos" />
                </items>
             </Menu>

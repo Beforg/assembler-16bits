@@ -65,4 +65,5 @@ public class CompilerApplication extends Application {
         stage.setResizable(false);
         stage.show();
     }
+
 }

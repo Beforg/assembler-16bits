@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: #1a321a;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unipampa.compiladorarquitetura16bits.SintaxeController">
+    <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="600.0" spacing="15" style="-fx-background-color: #1a321a;">
+
+        <padding>
+            <Insets bottom="30" left="40" right="40" top="30" />
+        </padding>
+
+        <!-- Título -->
+        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #ECF0F1; -fx-text-alignment: center;" text="Sintaxe do Compilador" />
+
+        <Separator style="-fx-background-color: #7FB069;" />
+
+        <!-- Seção: Declaração de Variáveis -->
+        <VBox alignment="TOP_LEFT" spacing="10" style="-fx-background-color: #243324; -fx-padding: 15; -fx-background-radius: 5;">
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;" text="Declaração de Variáveis" />
+
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #BDC3C7;" text="Valores permitidos: 1 a 15" wrapText="true" />
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Sintaxe:" />
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New';" text="inteiro " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text="nomeDaVariavel;" />
+                </TextFlow>
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New';" text="inteiro " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text="nomeDaVariavel = " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New';" text="valor" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text=";" />
+                </TextFlow>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Exemplos:" />
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New';" text="inteiro " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text="x;" />
+                </TextFlow>
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New';" text="inteiro " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text="resultado = " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New';" text="10" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New';" text=";" />
+                </TextFlow>
+            </VBox>
+        </VBox>
+
+        <!-- Seção: Condicionais -->
+        <VBox alignment="TOP_LEFT" spacing="10" style="-fx-background-color: #243324; -fx-padding: 15; -fx-background-radius: 5;">
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;" text="Estruturas Condicionais" />
+
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #BDC3C7;" text="Operadores de comparação: == (igual) e != (diferente)" wrapText="true" />
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Sintaxe:" />
+
+                <TextFlow lineSpacing="1.0" style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="se " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="(var/const " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="==" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" ou " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="!=" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" var/const) {" />
+                    <Text style="-fx-fill: #95A5A6; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    // corpo do se" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="} " />
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="senao " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="{" />
+                    <Text style="-fx-fill: #95A5A6; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    // corpo do senao" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="}" />
+                </TextFlow>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Exemplo:" />
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="se " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="(x " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="==" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="5" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=") {" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    resultado = x + " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="10" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=";} " />
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="senao " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="{" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    resultado = x - " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="2" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=";}" />
+                </TextFlow>
+            </VBox>
+        </VBox>
+
+        <!-- Seção: Loops -->
+        <VBox alignment="TOP_LEFT" spacing="10" style="-fx-background-color: #243324; -fx-padding: 15; -fx-background-radius: 5;">
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #7FB069;" text="Estruturas de Repetição" />
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Enquanto (While):" />
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="enquanto " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="(var/const " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="==" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" ou " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="!=" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" var/const) {" />
+                    <Text style="-fx-fill: #95A5A6; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    // corpo do enquanto" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="}" />
+                </TextFlow>
+
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Exemplo:" />
+
+                <TextFlow style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 3;">
+                    <Text style="-fx-fill: #E74C3C; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="enquanto " />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="(contador " />
+                    <Text style="-fx-fill: #3498DB; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="!=" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=" " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="10" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=") {" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="    contador = contador + " />
+                    <Text style="-fx-fill: #F39C12; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text="1" />
+                    <Text style="-fx-fill: #ECF0F1; -fx-font-family: 'Courier New'; -fx-font-size: 11px;" text=";}" />
+                </TextFlow>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #ECF0F1; -fx-font-weight: bold;" text="Para (For):" />
+
+                <Label style="-fx-font-size: 12px; -fx-text-fill: #E67E22; -fx-font-style: italic;" text="⚠ Não implementado ainda" />
+            </VBox>
+        </VBox>
+
+        <!-- Seção: Observações -->
+        <VBox alignment="TOP_LEFT" spacing="8" style="-fx-background-color: #243324; -fx-padding: 15; -fx-background-radius: 5;">
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #7FB069;" text="Observações Importantes" />
+
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Valores devem estar entre 1 e 15 (limitação da arquitetura de 4 bits)" wrapText="true" />
+
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Máximo de 8 registradores (R0-R7) disponíveis" wrapText="true" />
+
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Memória com 16 posições (0-15) para spill de variáveis" wrapText="true" />
+
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Comentários são iniciados com //" wrapText="true" />
+
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Operações suportadas: + (soma), - (subtração), * (multiplicação)" wrapText="true" />
+        </VBox>
+
+        <!-- Botão Fechar -->
+        <HBox alignment="CENTER" spacing="10">
+            <VBox.margin>
+                <Insets top="10" />
+            </VBox.margin>
+
+            <Button onAction="#fecharSintaxe" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" style="-fx-background-color: #7FB069; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Fechar" />
+        </HBox>
+
+    </VBox>
+</ScrollPane>

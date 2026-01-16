@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 public class CompilerController {
+    // Constantes de cores padronizadas para mensagens
+    private static final String COR_SUCESSO = "#27AE60";  // Verde
+    private static final String COR_ERRO = "#E74C3C";     // Vermelho
+    private static final String COR_AVISO = "#F39C12";    // Amarelo/Laranja
+
     @FXML
     private Label  label_reg0, label_reg1, label_reg2, label_reg3, label_reg4,
             label_reg5, label_reg6, label_reg7, label_mem0,label_mem1, label_mem2, label_mem3, label_mem4, label_mem5, label_mem6, label_mem7, label_mem8,
@@ -54,13 +59,15 @@ public class CompilerController {
 
     @FXML
     private void action() {
+        if (verificarCodigoVazio()) {
+            return;
+        }
         try {
             // Resetar estados antes de cada compilação
             symbolTable.clear();
             parser.reset();
 
             String code = parser.parse(codingArea.getText());
-
             // Substituir labels e armazenar o assembly gerado
             assemblyCodeGenerated = LabelGenerator.substituirLabel(code);
 
@@ -74,17 +81,15 @@ public class CompilerController {
 //            System.out.println(assemblyCodeGenerated);
 
             // Exibir mensagem de sucesso
-            setAviso("Compilação concluída com sucesso!", "#7FB069", "white");
+            setAviso("Compilação concluída com sucesso!", COR_SUCESSO, "white");
 
         } catch (CompilationException e) {
             // Capturar erros de compilação e exibir no componente
-            setAviso(e.getFormattedMessage(), "#E74C3C", "white");
+            setAviso(e.getFormattedMessage(), COR_ERRO, "white");
             System.err.println("Erro de compilação: " + e.getMessage());
 
         } catch (Exception e) {
-            // Capturar outros erros inesperados
-            setAviso("Erro inesperado: " + e.getMessage(), "#C0392B", "white");
-            e.printStackTrace();
+            setAviso("Erro: " + e.getMessage(), COR_ERRO, "white");
         }
     }
 
@@ -151,6 +156,14 @@ public class CompilerController {
             }
             index++;
         }
+    }
+
+    private boolean verificarCodigoVazio() {
+        String codigo = codingArea.getText().trim();
+        if (codigo.isEmpty()) {
+            setAviso("O código está vazio. Por favor, insira o código para gerar o Assembly.", COR_AVISO, "black");
+        }
+        return codigo.isEmpty();
     }
 
     private int extrairNumeroRegistrador(String nomeReg) {
@@ -256,7 +269,7 @@ public class CompilerController {
             // Verificar se há assembly gerado
             if (assemblyCodeGenerated == null || assemblyCodeGenerated.isEmpty()) {
                 System.out.println("Nenhum assembly gerado ainda. Compile o código primeiro.");
-                setAviso("Nenhum assembly gerado ainda. Compile o código primeiro.", "yellow", "black");
+                setAviso("Nenhum assembly gerado ainda. Compile o código primeiro.", COR_AVISO, "black");
                 return;
             }
 
@@ -285,5 +298,93 @@ public class CompilerController {
             e.printStackTrace();
             System.err.println("Erro ao abrir terminal de assembly: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void exibirSintaxe() {
+        try {
+            // Carregar o FXML da tela de sintaxe
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("sintaxe.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            // Criar nova janela (Stage)
+            Stage sintaxeStage = new Stage();
+            sintaxeStage.setTitle("Sintaxe do Compilador");
+            sintaxeStage.setScene(scene);
+            sintaxeStage.setResizable(true);
+
+            // Configurar como modal (bloqueia interação com janela principal)
+            sintaxeStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Exibir janela e aguardar até ser fechada
+            sintaxeStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir tela de sintaxe: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void compilarEsalvarAsm() {
+        if (verificarCodigoVazio()) {
+            return;
+        }
+
+        // Compilar o código primeiro
+        action();
+
+        // Verificar se a compilação foi bem-sucedida e há assembly gerado
+        if (assemblyCodeGenerated == null || assemblyCodeGenerated.isEmpty()) {
+            setAviso("Erro ao gerar Assembly. Verifique o código.", COR_ERRO, "white");
+            return;
+        }
+
+        // Obter o Stage atual (janela principal)
+        Stage stage = (Stage) codingArea.getScene().getWindow();
+
+        // Salvar o arquivo usando a classe utilitária
+        boolean sucesso = com.unipampa.compiladorarquitetura16bits.utils.AssemblyFileSaver.salvarArquivo(
+            assemblyCodeGenerated,
+            stage
+        );
+
+        if (sucesso) {
+            setAviso("Assembly compilado e salvo com sucesso!", COR_SUCESSO, "white");
+        } else {
+            setAviso("Compilação concluída, mas o salvamento foi cancelado.", COR_AVISO, "black");
+        }
+    }
+
+    @FXML
+    private void salvarCodigo() {
+        // Verificar se há código no TextArea
+        String codigo = codingArea.getText();
+
+        if (codigo == null || codigo.trim().isEmpty()) {
+            setAviso("Não há código para salvar. Por favor, escreva o código primeiro.", COR_AVISO, "black");
+            return;
+        }
+
+        // Obter o Stage atual (janela principal)
+        Stage stage = (Stage) codingArea.getScene().getWindow();
+
+        // Salvar o arquivo usando a classe utilitária
+        boolean sucesso = com.unipampa.compiladorarquitetura16bits.utils.SourceCodeFileSaver.salvarArquivo(
+            codigo,
+            stage
+        );
+
+        if (sucesso) {
+            setAviso("Código salvo com sucesso!", COR_SUCESSO, "white");
+        } else {
+            setAviso("Salvamento cancelado.", COR_AVISO, "black");
+        }
+    }
+
+    @FXML
+    private void encerrarCompilador() {
+        Stage stage = (Stage) codingArea.getScene().getWindow();
+        stage.close();
     }
 }
