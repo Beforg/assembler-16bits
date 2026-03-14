@@ -1,0 +1,8 @@
+*.o
+*.bin
+main
+test
+assembler
+testing
+main.exe
+.vscode
