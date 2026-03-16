@@ -1,6 +1,11 @@
-MIT License
+===============================================================================
+ENGLISH (INGLÊS)
+===============================================================================
 
-Copyright (c) 2025 Bruno Forgiarini
+Custom MIT License
+
+Copyright (c) 2025-present Ely Torres Neto, Bruno Forgiarini, Pablo Fernandez,
+Fábio Luiz Ramos, and other contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9,8 +14,21 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. CREDITS AND ATTRIBUTION: The above copyright notice and this permission notice
+shall be included in all copies or substantial portions of the Software. Credits
+to the original creators and maintainers (Ely Torres Neto, Bruno Forgiarini,
+Pablo Fernandez, and Fábio Luiz Ramos) must be prominently maintained in any
+derivative or distribution of the source code.
+
+2. PATENT RIGHTS: The permission granted in this license does not include a
+grant of patent rights to the user. The right to file for or own patents
+derived from this Software is reserved exclusively to the original authors
+and creators, at their sole discretion. Use of this Software for the purpose
+of filing patents by third parties to restrict the original or future use
+of this Software is expressly prohibited. Any violation, including
+unauthorized patent filings of algorithms or processes derived from this
+Software, shall subject the infringer to monetary fines and legal sanctions
+under the applicable jurisdiction.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,3 +37,45 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+===============================================================================
+PORTUGUÊS (PORTUGUESE)
+===============================================================================
+
+Licença MIT Customizada
+
+Copyright (c) 2025-presente Ely Torres Neto, Bruno Forgiarini, Pablo Fernandez,
+Fábio Luiz Ramos e outros contribuidores.
+
+Pelo presente, é concedida permissão, gratuitamente, a qualquer pessoa que obtenha
+uma cópia deste software e dos arquivos de documentação associados (o "Software"),
+para lidar com o Software sem restrição, incluindo, sem limitação, os direitos de
+usar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender
+cópias do Software, sujeitos às seguintes condições:
+
+1. CRÉDITOS E ATRIBUIÇÃO: O aviso de copyright acima e este aviso de permissão
+devem ser incluídos em todas as cópias ou partes substanciais do Software. Os
+créditos aos criadores e mantenedores originais (Ely Torres Neto, Bruno Forgiarini,
+Pablo Fernandez e Fábio Luiz Ramos) devem ser mantidos de forma visível em
+qualquer derivação ou distribuição do código-fonte.
+
+2. DIREITOS DE PATENTE: A permissão concedida nesta licença não inclui a concessão
+de direitos de patente ao usuário. O direito de solicitar ou possuir patentes
+derivadas deste Software é reservado exclusivamente aos autores e criadores
+originais, conforme sua própria escolha e critério. É expressamente proibida a
+utilização deste Software por terceiros para fins de registro de patentes que
+busquem restringir o uso original ou futuro deste Software. Qualquer violação,
+incluindo tentativas não autorizadas de patentear algoritmos ou processos
+derivados deste Software, tornará o infrator passível de multa pecuniária e
+sanções legais de acordo com a jurisdição aplicável.
+
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU
+IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO,
+ADEQUAÇÃO A UM DETERMINADO FIM E NÃO INFRAÇÃO. EM NENHUM CASO OS AUTORES OU
+DETENTORES DE COPYRIGHT SERÃO RESPONSÁVEIS POR QUALQUER REIVINDICAÇÃO, DANOS OU
+OUTRA RESPONSABILIDADE, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU DE OUTRA
+FORMA, DECORRENTE DE, FORA DE OU EM CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS
+NEGOCIAÇÕES NO SOFTWARE.
+===============================================================================
