@@ -109,37 +109,30 @@ public class Parser {
         for (int i = 0; i < linhas.length; i++) {
             String linha = linhas[i].trim();
 
-            // Pular linhas vazias e comentários primeiro
+
             if (linha.isEmpty() || linha.startsWith("//")) {
                 continue;
             }
 
-            // Tratar chaves e senao
-            // Caso 1: "} senao {" na mesma linha
             if (linha.contains("}") && linha.contains(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
-//                System.out.println("\n=== DEBUG: Encontrado } senao { na mesma linha ===");
+
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
-//                    System.out.println("top.hasElse: " + top.hasElse);
-//                    System.out.println("top.elseLabel: " + top.elseLabel);
-//                    System.out.println("top.endLabel: " + top.endLabel);
+
 
                     if (top.hasElse) {
                         // Adicionar JMP para fim e label SENAO_INICIO
                         codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
                         codigoAsm.append(top.elseLabel).append(":\n");
-//
-//                        System.out.println("Gerou: JMP," + top.endLabel);
-//                        System.out.println("Gerou: " + top.elseLabel + ":");
+
+
 
                         // Processar corpo do SENAO
                         i = montarInstrucaoSenao(i, linhas, codigoAsm, top.endLabel);
 
                         // Adicionar label de fim
                         codigoAsm.append(top.endLabel).append(":\n");
-//                        System.out.println("Gerou: " + top.endLabel + ":");
 
-                        // Remover da stack
                         ifLabelStack.pop();
                         continue;
                     }
@@ -148,33 +141,29 @@ public class Parser {
 
             // Caso 2: Apenas "}" (fechamento de bloco)
             if (linha.equals("}") || linha.equals("};")) {
-//                System.out.println("\n=== DEBUG: Encontrado } sozinho ===");
+
                 if (!ifLabelStack.isEmpty()) {
                     IfLabels top = ifLabelStack.peek();
-//                    System.out.println("top.hasElse: " + top.hasElse);
-//                    System.out.println("top.endLineIndex: " + top.endLineIndex + " vs i=" + i);
 
                     // Verificar se a próxima linha contém SENAO
                     boolean proximaLinhaESenao = false;
                     if (i + 1 < linhas.length) {
                         String proximaLinha = linhas[i + 1].trim();
-//                        System.out.println("Próxima linha [" + (i+1) + "]: '" + proximaLinha + "'");
+
                         if (proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString())) {
                             proximaLinhaESenao = true;
                         }
-//                        System.out.println("startsWith 'senao'? " + proximaLinha.startsWith(CompiladorSintaxe.SENAO.getSintaxeEmString()));
+
                     }
-//                    System.out.println("proximaLinhaESenao: " + proximaLinhaESenao);
+
 
                     // SE com SENAO (senao na próxima linha)
                     if (top.hasElse && proximaLinhaESenao) {
-//                        System.out.println("Processando SE com SENAO (senao na próxima linha)");
+
                         // Adicionar JMP para fim e label SENAO_INICIO
                         codigoAsm.append(Opcode.JMP.getCode()).append(top.endLabel).append("\n");
                         codigoAsm.append(top.elseLabel).append(":\n");
 
-//                        System.out.println("Gerou: JMP," + top.endLabel);
-//                        System.out.println("Gerou: " + top.elseLabel + ":");
 
                         // Pular para a próxima linha (que é o SENAO)
                         i++;
@@ -238,6 +227,10 @@ public class Parser {
 
                 String operandoEsquerdo = CondicionalUtils.extrairOperandoEsquerdo(verificarSeLike);
                 String operandoDireito = CondicionalUtils.extrairOperandoDireito(verificarSeLike);
+
+                operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
+                operandoDireito = montarOperador(operandoDireito, codigoAsm, registradorAtualLivre);
+
                 String operadorCondicionalOpcode = CondicionalUtils.extrairOperadorCondicional(verificarSeLike);
                 String labelInicio = LabelGenerator.gerarLabel(LabelsCompilador.ENQUANTO_INICIO);
                 String labelFim = LabelGenerator.gerarLabel(LabelsCompilador.FIM_ENQUANTO);
@@ -253,10 +246,8 @@ public class Parser {
                     opcodeParaSaltarAoFim = Opcode.BEQ.getCode();
                 }
 
-                operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
-                operandoDireito = montarOperador(operandoDireito, codigoAsm, registradorAtualLivre);
 
-                // se condição falsa -> salta para labelFim
+
                 montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, opcodeParaSaltarAoFim, labelFim);
 
                 // processa corpo do enquanto (linhas entre i+1 e fechamento)
@@ -269,11 +260,11 @@ public class Parser {
                     j++;
                 }
 
-                // volta para verificação
+
                 montarInstrucaoJump(codigoAsm, labelInicio);
                 codigoAsm.append(labelFim).append(":\n");
 
-                // pular para a linha depois do fechamento do bloco
+
                 i = endLineIndex;
 
             } else if (linha.contains(CompiladorSintaxe.PARA.getSintaxeEmString())) {
@@ -325,11 +316,6 @@ public class Parser {
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
 
-//            System.out.println("\n=== DEBUG: SE COM SENAO ===");
-//            System.out.println("labelThen: " + labelThen);
-//            System.out.println("labelElse: " + labelElse);
-//            System.out.println("labelEnd: " + labelEnd);
-
             ifLabelStack.push(new IfLabels(labelThen, labelElse, labelEnd));
 
             operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
@@ -339,21 +325,10 @@ public class Parser {
             montarInstrucaoJump(codigoAsm, labelElse);
             codigoAsm.append(labelThen).append(":\n");
 
-//            System.out.println("Gerou: BEQ para " + labelThen);
-//            System.out.println("Gerou: JMP para " + labelElse);
-
         } else {
             String labelThen = LabelGenerator.gerarLabel(LabelsCompilador.SE_INICIO);
             String labelEnd = LabelGenerator.gerarLabel(LabelsCompilador.FIM_SE);
-
-//            System.out.println("\n=== DEBUG: SE SEM SENAO ===");
-//            System.out.println("labelThen: " + labelThen);
-//            System.out.println("labelEnd: " + labelEnd);
-
-            // find the closing brace line index for this then-block so we can emit the end label later
             int endLineIndex = buscarFechamentoDeChaves(linhas, i);
-
-            // push a marker so when we reach the closing brace we know to write the end label
             ifLabelStack.push(new IfLabels(labelThen, labelEnd, endLineIndex));
 
             operandoEsquerdo = montarOperador(operandoEsquerdo, codigoAsm, registradorAtualLivre);
@@ -362,9 +337,6 @@ public class Parser {
             montarInstrucaoSe(codigoAsm, operandoEsquerdo, operandoDireito, operadorCondicionalOpcode, labelThen);
             montarInstrucaoJump(codigoAsm, labelEnd);
             codigoAsm.append(labelThen).append(":\n");
-
-//            System.out.println("Gerou: BEQ para " + labelThen);
-//            System.out.println("Gerou: JMP para " + labelEnd);
         }
     }
 
@@ -379,10 +351,10 @@ public class Parser {
             if (opens > 0) foundOpening = true;
             depth += opens - closes;
             if (foundOpening && depth == 0) {
-                return j; // line index of the closing brace
+                return j;
             }
         }
-        // if not found, return startIndex (fallback)
+
         return startIndex;
     }
 
@@ -593,29 +565,131 @@ public class Parser {
     }
 
     private void montarInstrucaoSubtracao(String expressao, String regex, StringBuilder codigoAsm, Opcode sub, String registradorDaVariavelUsada) {
-        String[] ops = expressao.split(regex);
+        String[] elementosDaExpressao = expressao.split(regex);
 
-        // Usar getOrLoadRegistrador para suportar variáveis na memória
-        Registrador reg1Obj = getOrLoadRegistrador(ops[0].trim(), codigoAsm);
-        Registrador reg2Obj = getOrLoadRegistrador(ops[1].trim(), codigoAsm);
+        if (verificarSeContemMaisDeDoisTermos(elementosDaExpressao)) {
+            // Para subtração, a ordem importa (não é comutativa).
+            // Processamos estritamente da esquerda para a direita: (A - B) - C
+            String regOperandoEsq = null;
 
-        if (reg1Obj == null || reg2Obj == null) {
-            throw new CompilationException(
-                "Variável não declarada na expressão de subtração.",
-                CompilationException.ErrorType.SEMANTIC_ERROR
-            );
+            for (int i = 0; i < elementosDaExpressao.length; i++) {
+                String termo = elementosDaExpressao[i].trim();
+                String regTermoAtual;
+
+                // Processa o termo atual (Inteiro ou Variável)
+                if (IntegerUtils.verificaSeEhInteiro(termo)) {
+                    int valor = Integer.parseInt(termo);
+                    validateInt(valor); // Validação de limite aproveitada da sua lógica
+
+                    String nomeTemporario = "_const_sub_" + valor + "_" + System.nanoTime();
+                    AllocationResult result = allocator.allocate(nomeTemporario, valor);
+                    result.getInstructions().forEach(codigoAsm::append);
+
+                    regTermoAtual = result.getRegistrador().getNome();
+                    codigoAsm.append(Opcode.LDA.getCode())
+                            .append(regTermoAtual)
+                            .append(",")
+                            .append(valor)
+                            .append("\n");
+                } else {
+                    Registrador regObj = getOrLoadRegistrador(termo, codigoAsm);
+                    if (regObj == null) {
+                        throw new CompilationException(
+                                "Variável '" + termo + "' não foi declarada.",
+                                CompilationException.ErrorType.SEMANTIC_ERROR
+                        );
+                    }
+                    regTermoAtual = regObj.getNome();
+                }
+
+                if (i == 0) {
+                    // Sendo o primeiro termo (minuendo), apenas guardamos o registrador
+                    regOperandoEsq = regTermoAtual;
+                } else {
+                    // Sendo o segundo termo ou além, executamos a subtração: DESTINO = ESQUERDA - DIREITA
+                    codigoAsm.append(sub.getCode())
+                            .append(registradorDaVariavelUsada)
+                            .append(",")
+                            .append(regOperandoEsq)
+                            .append(",")
+                            .append(regTermoAtual)
+                            .append("\n");
+
+                    // O resultado agora está no registrador de destino.
+                    // Ele vira o operando esquerdo para a próxima subtração do loop.
+                    regOperandoEsq = registradorDaVariavelUsada;
+                }
+            }
+
+        } else {
+            // Tratar subtração de dois termos (variável - variável, variável - inteiro, etc)
+            String termo1 = elementosDaExpressao[0].trim();
+            String termo2 = elementosDaExpressao[1].trim();
+
+            String reg1Nome;
+            String reg2Nome;
+
+            // Processar primeiro termo (Minuendo)
+            if (IntegerUtils.verificaSeEhInteiro(termo1)) {
+                int valor1 = Integer.parseInt(termo1);
+                validateInt(valor1);
+
+                String nomeTemporario = "_const_" + valor1 + "_" + System.nanoTime();
+                AllocationResult result = allocator.allocate(nomeTemporario, valor1);
+                result.getInstructions().forEach(codigoAsm::append);
+
+                reg1Nome = result.getRegistrador().getNome();
+                codigoAsm.append(Opcode.LDA.getCode())
+                        .append(reg1Nome)
+                        .append(",")
+                        .append(valor1)
+                        .append("\n");
+            } else {
+                Registrador reg1 = getOrLoadRegistrador(termo1, codigoAsm);
+                if (reg1 == null) {
+                    throw new CompilationException(
+                            "Variável '" + termo1 + "' não foi declarada na expressão.",
+                            CompilationException.ErrorType.SEMANTIC_ERROR
+                    );
+                }
+                reg1Nome = reg1.getNome();
+            }
+
+            // Processar segundo termo (Subtraendo)
+            if (IntegerUtils.verificaSeEhInteiro(termo2)) {
+                int valor2 = Integer.parseInt(termo2);
+                validateInt(valor2);
+
+                String nomeTemporario = "_const_" + valor2 + "_" + System.nanoTime();
+                AllocationResult result = allocator.allocate(nomeTemporario, valor2);
+                result.getInstructions().forEach(codigoAsm::append);
+
+                reg2Nome = result.getRegistrador().getNome();
+                codigoAsm.append(Opcode.LDA.getCode())
+                        .append(reg2Nome)
+                        .append(",")
+                        .append(valor2)
+                        .append("\n");
+            } else {
+                Registrador reg2 = getOrLoadRegistrador(termo2, codigoAsm);
+                if (reg2 == null) {
+                    throw new CompilationException(
+                            "Variável '" + termo2 + "' não foi declarada na expressão.",
+                            CompilationException.ErrorType.SEMANTIC_ERROR
+                    );
+                }
+                reg2Nome = reg2.getNome();
+            }
+
+            // Gerar instrução da Subtração (SUB)
+            codigoAsm.append(sub.getCode())
+                    .append(registradorDaVariavelUsada)
+                    .append(",")
+                    .append(reg1Nome)
+                    .append(",")
+                    .append(reg2Nome)
+                    .append("\n");
         }
-
-        String reg1 = reg1Obj.getNome();
-        String reg2 = reg2Obj.getNome();
-
-        codigoAsm.append(sub.getCode())
-                .append(registradorDaVariavelUsada)
-                .append(",")
-                .append(reg1)
-                .append(",")
-                .append(reg2)
-                .append("\n");
     }
 
     private void montarInstrucaoSoma(String expressao, StringBuilder codigoAsm, String registradorDaVariavelUsada, int registradorAtualLivre) {

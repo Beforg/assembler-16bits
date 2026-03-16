@@ -160,7 +160,8 @@
 
             <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Comentários são iniciados com //" wrapText="true" />
 
-            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Operações suportadas: + (soma), - (subtração), * (multiplicação)" wrapText="true" />
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• Operações suportadas: + (soma), - (subtração), * (multiplicação). Apenas Soma e Subtração aceitam múltiplas operações por linha." wrapText="true" />
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #BDC3C7;" text="• A operação de Multiplicação atualmente suporta apenas operações entre variáveis." wrapText="true" />
         </VBox>
 
         <!-- Botão Fechar -->
