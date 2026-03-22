@@ -17,7 +17,7 @@ public class LabelGenerator {
         Map<String, Integer> labelsTable = new HashMap<>();
         List<String> noLabels = new ArrayList<>();
 
-        int count = 1;
+        int count = 0;
         for (String linha : linhas) {
             String t = linha.trim();
             if (t.endsWith(":")) {

@@ -23,7 +23,8 @@ public class RegisterAllocator {
     private final Map<Variavel, Registrador> symbolTable;
 
     // Rastreamento de uso dos registradores (para política LRU)
-    private final Map<Registrador, LocalDateTime> lastUsedTime;
+    // Alterado para Map<String, LocalDateTime> onde a chave é o nome do registrador (ex: "R0")
+    private final Map<String, LocalDateTime> lastUsedTime;
 
     // Registradores disponíveis
     private final Queue<Integer> availableRegisters;
@@ -172,7 +173,7 @@ public class RegisterAllocator {
      * Atualiza o tempo de último uso de um registrador
      */
     public void updateLastUsedTime(Registrador reg) {
-        lastUsedTime.put(reg, LocalDateTime.now());
+        lastUsedTime.put(reg.getNome(), LocalDateTime.now());
     }
 
     /**
@@ -202,7 +203,7 @@ public class RegisterAllocator {
         // Encontrar o registrador menos recentemente usado
         for (Map.Entry<Variavel, Registrador> entry : symbolTable.entrySet()) {
             Registrador reg = entry.getValue();
-            LocalDateTime usedTime = lastUsedTime.getOrDefault(reg, LocalDateTime.MIN);
+            LocalDateTime usedTime = lastUsedTime.getOrDefault(reg.getNome(), LocalDateTime.MIN);
 
             if (usedTime.isBefore(oldestTime)) {
                 oldestTime = usedTime;
@@ -232,9 +233,9 @@ public class RegisterAllocator {
         // Atualizar localização: agora está na memória
         locationTracker.setInMemory(lruVar.getNome(), memAddr);
 
-        // Remover da symbol table e liberar registrador
+        // Remover da symbol table e remover timestamp
         symbolTable.remove(lruVar);
-        lastUsedTime.remove(lruReg);
+        lastUsedTime.remove(lruReg.getNome());
         usedRegisters.remove(regNumber);
 
         return new SpillResult(regNumber, spillInstruction);
@@ -253,7 +254,7 @@ public class RegisterAllocator {
         // Encontrar o registrador menos recentemente usado
         for (Map.Entry<Variavel, Registrador> entry : symbolTable.entrySet()) {
             Registrador reg = entry.getValue();
-            LocalDateTime usedTime = lastUsedTime.getOrDefault(reg, LocalDateTime.MIN);
+            LocalDateTime usedTime = lastUsedTime.getOrDefault(reg.getNome(), LocalDateTime.MIN);
 
             if (usedTime.isBefore(oldestTime)) {
                 oldestTime = usedTime;
@@ -283,9 +284,9 @@ public class RegisterAllocator {
         // Atualizar localização: agora está na memória
         locationTracker.setInMemory(lruVar.getNome(), memAddr);
 
-        // Remover da symbol table e liberar registrador
+        // Remover da symbol table e remover timestamp
         symbolTable.remove(lruVar);
-        lastUsedTime.remove(lruReg);
+        lastUsedTime.remove(lruReg.getNome());
         usedRegisters.remove(regNumber);
 
         return regNumber;

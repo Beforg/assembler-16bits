@@ -80,8 +80,8 @@ public class Parser {
      * @return Registrador com a variável
      */
     private Registrador getOrLoadRegistrador(String varName, StringBuilder codigoAsm) {
-        // 1. Verificar se já está em registrador
-        Registrador reg = findRegistradorByVarName(varName);
+        // 1. Verificar se já está em registrador - usar allocator.findByVarName que atualiza LRU
+        Registrador reg = allocator.findByVarName(varName);
         if (reg != null) {
             return reg;
         }
@@ -879,32 +879,32 @@ public class Parser {
             int regAtual,
             StringBuilder codigoAsm) {
 
-        int valor;
-        String nomeDaNovaVariavel;
-        String registradorDaVariavel;
-
         String[] partes = linha.replace(";", "").split("=");
+        String nomeDaNovaVariavel = partes[0].replace("inteiro", "").trim();
+
         if (variavelEstaInicializada(partes)) {
-            nomeDaNovaVariavel = extrairNomeVariavel(partes);
-            valor = extrairValorInteiro(partes);
+            int valor = extrairValorInteiro(partes);
 
-            // MUDAR
+            // Alocar usando RegisterAllocator para respeitar LRU/spill
+            AllocationResult result = allocator.allocate(nomeDaNovaVariavel, valor);
+            result.getInstructions().forEach(codigoAsm::append);
 
-            registradorDaVariavel = montarRegistradorParaVariavel(regAtual);
-            Registrador registrador = new Registrador(registradorDaVariavel, valor);
-            Variavel variavelNova = new Variavel(nomeDaNovaVariavel, registrador);
+            Registrador reg = result.getRegistrador();
+            codigoAsm.append(Opcode.LDA.getCode())
+                    .append(reg.getNome())
+                    .append(",")
+                    .append(valor)
+                    .append("\n");
 
-            symbolTable.put(variavelNova, registrador);
-            codigoAsm.append(Opcode.LDA.getCode()).append(registradorDaVariavel).append(",").append(valor).append("\n");
         } else {
+            // Declaração sem inicialização: alocar com valor 0
+            AllocationResult result = allocator.allocate(nomeDaNovaVariavel, 0);
+            result.getInstructions().forEach(codigoAsm::append);
 
-            nomeDaNovaVariavel = extrairNomeVariavel(partes);
-            registradorDaVariavel = montarRegistradorParaVariavel(regAtual);
-            Registrador registrador = new Registrador(registradorDaVariavel, 0);
-            Variavel variavelNova = new Variavel(nomeDaNovaVariavel, registrador);
-
-            symbolTable.put(variavelNova, registrador);
-            codigoAsm.append(Opcode.LDA.getCode()).append(registradorDaVariavel).append(",").append("0").append("\n");
+            Registrador reg = result.getRegistrador();
+            codigoAsm.append(Opcode.LDA.getCode())
+                    .append(reg.getNome())
+                    .append(",0\n");
         }
 
     }
