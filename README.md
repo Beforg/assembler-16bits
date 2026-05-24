@@ -1,16 +1,15 @@
 
 ---
 
-# 🧠 Projeto de Arquitetura Digital de 16 Bits
+# Projeto de Arquitetura Digital de 16 Bits
 
-**Disciplina:** Projeto Digital I  
-**Professor:** Fábio Ramos
+Este repositório contém a implementação de um **microprocessador didático de 16 bits** `(assembler-arquitetura-16bits)`, com um conjunto de instruções customizado, semelhante ao MIPS. O projeto foi desenvolvido como parte da disciplina **Projeto Digital 1** e implementado utilizando a ferramenta **Logisim**.
 
-Este repositório contém a implementação de um **microprocessador didático de 16 bits**, com um conjunto de instruções customizado, semelhante ao MIPS. O projeto foi desenvolvido como parte da disciplina **Projeto Digital 1** e implementado utilizando a ferramenta **Logisim**.
+Além disso, também foi desenvolvido um montador `(assembler-arquitetura-16bits)`, que transforma as instruções asm em binário para leitura da memória do Logisim e um compilador para gerar código alto nível para arquitetura `(compilador-arquitetura-16bits)`
 
 ---
 
-## 📐 Características da Arquitetura
+## Características da Arquitetura
 
 - **Arquitetura de 16 bits:** Barramento de dados e registradores manipulam 16 bits.
 - **Banco de Registradores:** 8 registradores de uso geral (`R0` a `R7`).
@@ -20,16 +19,17 @@ Este repositório contém a implementação de um **microprocessador didático d
 
 ## 🧾 Conjunto de Instruções (ISA)
 
-### ✅ Grupo 1 — Aritmética e Manipulação de Dados
+### Grupo 1 — Aritmética e Manipulação de Dados
 
 | Instrução | Sintaxe                             | Descrição |
 |-----------|-------------------------------------|-----------|
 | `LDA`     | `LDA Rdest, valor_imediato`         | Carrega um valor imediato no registrador destino |
+| `STA`     | `STA Rsource, enderecoMem (0-15)` | Salva valor do Rsource na memória
 | `SUM`     | `SUM Rdest, Rf1, Rf2`           | Soma `Rf1` com `Rf2` e armazena em `Rdest` |
 | `SUB`     | `SUB Rdest, Rf1, Rf2`           | Subtrai `Rf2` de `Rf1` e armazena em `Rdest` |
 | `MUL`     | `MUL Rdest, Rf1, Rf2`           | Multiplica `Rf1` por `Rf2` e armazena em `Rdest` |
 
-### ✅ Grupo 2 — Controle de Fluxo
+### Grupo 2 — Controle de Fluxo
 
 | Instrução | Sintaxe                             | Descrição |
 |-----------|-------------------------------------|-----------|
@@ -39,7 +39,7 @@ Este repositório contém a implementação de um **microprocessador didático d
 
 ---
 
-## 🖼️ Arquitetura
+## Arquitetura
 
 Visão geral do datapath implementado no Logisim:
 
@@ -51,7 +51,7 @@ Visão geral do datapath implementado no Logisim:
 
 ---
 
-## 🧪 Como Testar o Projeto
+## Como Testar o Projeto
 
 ### 🔧 Pré-requisitos
 
@@ -59,6 +59,12 @@ Visão geral do datapath implementado no Logisim:
 - GCC — Compilador C (Recomendável recompilar o código .c).
 
 ---
+
+## Compilador
+
+[Compilador](https://github.com/Beforg/arquitetura-16bits/tree/dev/compilador-arquitetura-16bits) disponível para escrita de códigos alto nível, que podem ser transformados em instruções assembly para serem usadas no [Montador](https://github.com/Beforg/arquitetura-16bits/tree/dev/assembler-arquitetura-16bits).
+
+![Compilador da arquitetura](/assets/compilador0526.png)
 
 ### ▶️ Passos para Execução
 
