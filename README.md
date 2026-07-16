@@ -71,7 +71,7 @@ Visão geral do datapath implementado no Logisim:
 #### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/Beforg/Projeto-Digital.git
+git clone https://github.com/Beforg/arquitetura-16bits.git
 
 ```
 Compile o `assembler.c` para garantir o funcionamento.
