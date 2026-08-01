@@ -45,7 +45,7 @@ Visão geral do datapath implementado no Logisim:
 
 [Montagem da Parte de Controle](/fsm/controle-fsm.pdf)
 
-![Circuito no Logisim](/assets/arquitetura_08072025.png)
+![Circuito no Logisim](/assets/arquitetura-legenda.png)
 
 
 
