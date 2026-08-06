@@ -216,7 +216,7 @@ void exibirInstrucoes() {
     printf("Instrucao | Formato de Uso           | Descricao\n");
     printf("----------|--------------------------|--------------------------------------------------\n");
     printf("LDA       | LDA Rd, Imediato         | Carrega um valor Imediato no registrador Rd.\n");
-    printf("STA       | LDA Rf, Endereco         | Salva na memória o valor de Rf.\n");
+    printf("STA       | STA Rf, Endereco         | Salva na memória o valor de Rf.\n");
     printf("SUM       | SUM Rd, Rf1, Rf2         | Soma o valor de Rf1 e Rf2 e armazena em Rd.\n");
     printf("SUB       | SUB Rd, Rf1, Rf2         | Subtrai o valor de Rf1 por Rf2 e armazena em Rd.\n");
     printf("MUL       | MUL Rd, Rf1, Rf2         | Multiplica o valor de Rf1 por Rf2 e armazena em Rd.\n");
